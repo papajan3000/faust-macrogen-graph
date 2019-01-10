@@ -1,0 +1,129 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><graph edgedefault="directed"><node id="1827"/>
+<node id="09"/>
+<node id="faust://document/faustedition/2_II_H.2_3"/>
+<node id="faust://document/faustedition/H_P129_Var_"/>
+<node id="faust://document/faustedition/2_II_H.2_1"/>
+<node id="faust://document/fischer_lamberg/2_II_H.2_b"/>
+<node id="faust://document/faustedition/2_II_H.1"/>
+<node id="faust://document/faustedition/2_I_H.5"/>
+<node id="faust://document/faustedition/2_I_H.9k"/>
+<node id="faust://inscription/wa/2_I_H.10"/>
+<node id="faust://document/faustedition/2_I_H.11"/>
+<node id="faust://document/faustedition/2_I_H.13"/>
+<node id="faust://inscription/faustedition/2_I_H.19/i_uebrige"/>
+<node id="faust://document/faustedition/2_I_H.22"/>
+<node id="faust://document/faustedition/2_I_H.24"/>
+<node id="11"/>
+<node id="faust://document/faustedition/2_II_H.3"/>
+<node id="faust://document/faustedition/2_I_H.15"/>
+<node id="faust://document/faustedition/2_I_H.25"/>
+<node id="faust://document/faustedition/2_I_H.26"/>
+<node id="faust://document/faustedition/2_I_H.24b"/>
+<node id="faust://document/faustedition/H_P105"/>
+<node id="12"/>
+<node id="faust://document/faustedition/2_I_H.3"/>
+<node id="faust://document/faustedition/2_I_H.4"/>
+<node id="faust://document/faustedition/2_I_H.6"/>
+<node id="faust://document/faustedition/2_I_H.7"/>
+<node id="faust://inscription/faustedition/2_I_H.19/i_4"/>
+<node id="faust://document/faustedition/2_I_H.29"/>
+<node id="faust://inscription/faustedition/2_I_H.32/i_uebrige"/>
+<node id="faust://document/faustedition/2_I_H.33"/>
+<node id="faust://document/faustedition/2_I_H.34"/>
+<node id="faust://document/faustedition/2_I_H.34a"/>
+<node id="faust://document/faustedition/2_I_H.35"/>
+<node id="faust://document/faustedition/2_I_H.36"/>
+<node id="faust://document/faustedition/2_I_H.37"/>
+<node id="faust://document/faustedition/2_I_H.38"/>
+<node id="faust://document/faustedition/2_I_H.39"/>
+<node id="faust://document/faustedition/2_I_H.40"/>
+<node id="faust://document/faustedition/2_I_H.41"/>
+<node id="faust://document/faustedition/2_I_H.42"/>
+<node id="faust://inscription/faustedition/2_I_H.43/i_uebrige"/>
+<node id="faust://inscription/faustedition/H_P106/i_v"/>
+<node id="faust://inscription/faustedition/2_I_H.32/i_7_v"/>
+<node id="faust://document/faustedition/2_I_H.45"/>
+<node id="faust://document/faustedition/2_I_H.9p_"/>
+<node id="faust://document/faustedition/H_P106"/>
+<node id="10"/>
+<node id="faust://document/faustedition/2_I_H.8"/>
+<node id="faust://document/faustedition/H_P102"/>
+<node id="faust://document/faustedition/2_I_H.17"/>
+<node id="08"/>
+<node id="faust://document/faustedition/H_P101"/>
+<node id="07"/>
+<node id="faust://document/faustedition/H_P108c"/>
+<node id="faust://document/wa/2_I_H.12"/>
+<node id="faust://document/faustedition/H_P108b"/>
+<node id="01"/>
+<node id="faust://document/faustedition/H_P101a"/>
+<node id="faust://document/faustedition/2_III_H.73"/>
+<node id="04"/>
+<node id="faust://document/faustedition/C.1_4"/>
+<node id="02"/>
+<node id="faust://document/faustedition/2_III_H.74"/>
+<edge source="1827" target="09"/>
+<edge source="1827" target="11"/>
+<edge source="1827" target="12"/>
+<edge source="1827" target="10"/>
+<edge source="1827" target="08"/>
+<edge source="1827" target="07"/>
+<edge source="1827" target="01"/>
+<edge source="1827" target="04"/>
+<edge source="1827" target="02"/>
+<edge source="09" target="faust://document/faustedition/2_II_H.2_3"/>
+<edge source="faust://document/faustedition/2_II_H.2_3" target="faust://document/faustedition/H_P129_Var_"/>
+<edge source="faust://document/faustedition/H_P129_Var_" target="faust://document/faustedition/2_II_H.2_1"/>
+<edge source="faust://document/faustedition/2_II_H.2_1" target="faust://document/fischer_lamberg/2_II_H.2_b"/>
+<edge source="faust://document/fischer_lamberg/2_II_H.2_b" target="faust://document/faustedition/2_II_H.1"/>
+<edge source="faust://document/faustedition/2_II_H.1" target="faust://document/faustedition/2_I_H.5"/>
+<edge source="faust://document/faustedition/2_I_H.5" target="faust://document/faustedition/2_I_H.9k"/>
+<edge source="faust://document/faustedition/2_I_H.9k" target="faust://inscription/wa/2_I_H.10"/>
+<edge source="faust://inscription/wa/2_I_H.10" target="faust://document/faustedition/2_I_H.11"/>
+<edge source="faust://document/faustedition/2_I_H.11" target="faust://document/faustedition/2_I_H.13"/>
+<edge source="faust://document/faustedition/2_I_H.13" target="faust://inscription/faustedition/2_I_H.19/i_uebrige"/>
+<edge source="faust://inscription/faustedition/2_I_H.19/i_uebrige" target="faust://document/faustedition/2_I_H.22"/>
+<edge source="faust://document/faustedition/2_I_H.22" target="faust://document/faustedition/2_I_H.24"/>
+<edge source="11" target="faust://document/faustedition/2_II_H.3"/>
+<edge source="faust://document/faustedition/2_II_H.3" target="faust://document/faustedition/2_I_H.15"/>
+<edge source="faust://document/faustedition/2_I_H.15" target="faust://document/faustedition/2_I_H.25"/>
+<edge source="faust://document/faustedition/2_I_H.25" target="faust://document/faustedition/2_I_H.26"/>
+<edge source="faust://document/faustedition/2_I_H.26" target="faust://document/faustedition/2_I_H.24b"/>
+<edge source="faust://document/faustedition/2_I_H.24b" target="faust://document/faustedition/H_P105"/>
+<edge source="12" target="faust://document/faustedition/2_I_H.3"/>
+<edge source="faust://document/faustedition/2_I_H.3" target="faust://document/faustedition/2_I_H.4"/>
+<edge source="faust://document/faustedition/2_I_H.4" target="faust://document/faustedition/2_I_H.6"/>
+<edge source="faust://document/faustedition/2_I_H.6" target="faust://document/faustedition/2_I_H.7"/>
+<edge source="faust://document/faustedition/2_I_H.7" target="faust://inscription/faustedition/2_I_H.19/i_4"/>
+<edge source="faust://inscription/faustedition/2_I_H.19/i_4" target="faust://document/faustedition/2_I_H.29"/>
+<edge source="faust://document/faustedition/2_I_H.29" target="faust://inscription/faustedition/2_I_H.32/i_uebrige"/>
+<edge source="faust://inscription/faustedition/2_I_H.32/i_uebrige" target="faust://document/faustedition/2_I_H.33"/>
+<edge source="faust://document/faustedition/2_I_H.33" target="faust://document/faustedition/2_I_H.34"/>
+<edge source="faust://document/faustedition/2_I_H.34" target="faust://document/faustedition/2_I_H.34a"/>
+<edge source="faust://document/faustedition/2_I_H.34a" target="faust://document/faustedition/2_I_H.35"/>
+<edge source="faust://document/faustedition/2_I_H.35" target="faust://document/faustedition/2_I_H.36"/>
+<edge source="faust://document/faustedition/2_I_H.36" target="faust://document/faustedition/2_I_H.37"/>
+<edge source="faust://document/faustedition/2_I_H.37" target="faust://document/faustedition/2_I_H.38"/>
+<edge source="faust://document/faustedition/2_I_H.38" target="faust://document/faustedition/2_I_H.39"/>
+<edge source="faust://document/faustedition/2_I_H.39" target="faust://document/faustedition/2_I_H.40"/>
+<edge source="faust://document/faustedition/2_I_H.40" target="faust://document/faustedition/2_I_H.41"/>
+<edge source="faust://document/faustedition/2_I_H.41" target="faust://document/faustedition/2_I_H.42"/>
+<edge source="faust://document/faustedition/2_I_H.42" target="faust://inscription/faustedition/2_I_H.43/i_uebrige"/>
+<edge source="faust://inscription/faustedition/2_I_H.43/i_uebrige" target="faust://inscription/faustedition/H_P106/i_v"/>
+<edge source="faust://inscription/faustedition/H_P106/i_v" target="faust://inscription/faustedition/2_I_H.32/i_7_v"/>
+<edge source="faust://inscription/faustedition/2_I_H.32/i_7_v" target="faust://document/faustedition/2_I_H.45"/>
+<edge source="faust://document/faustedition/2_I_H.45" target="faust://document/faustedition/2_I_H.9p_"/>
+<edge source="faust://document/faustedition/2_I_H.9p_" target="faust://document/faustedition/H_P106"/>
+<edge source="10" target="faust://document/faustedition/2_I_H.8"/>
+<edge source="faust://document/faustedition/2_I_H.8" target="faust://document/faustedition/H_P102"/>
+<edge source="faust://document/faustedition/H_P102" target="faust://document/faustedition/2_I_H.17"/>
+<edge source="08" target="faust://document/faustedition/H_P101"/>
+<edge source="07" target="faust://document/faustedition/H_P108c"/>
+<edge source="faust://document/faustedition/H_P108c" target="faust://document/wa/2_I_H.12"/>
+<edge source="faust://document/wa/2_I_H.12" target="faust://document/faustedition/H_P108b"/>
+<edge source="01" target="faust://document/faustedition/H_P101a"/>
+<edge source="faust://document/faustedition/H_P101a" target="faust://document/faustedition/2_III_H.73"/>
+<edge source="04" target="faust://document/faustedition/C.1_4"/>
+<edge source="02" target="faust://document/faustedition/2_III_H.74"/>
+</graph></graphml>
