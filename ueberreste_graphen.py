@@ -93,3 +93,59 @@ for sg in g_sub_list:
     directed_subgraphs_list(g2)
     
    """
+#%%
+   
+counter=0
+for year, liste in sorted_year_handschriften.items():
+    tg = nx.DiGraph()
+    if counter>= 10:
+        break
+    for element in liste:
+        for ts_list in top_sort_list:
+            if element == ts_list[0]:
+                #l = [year] + ts_list
+                #print(l)
+                utils.add_egdes_from_node_list(tg, ts_list)
+                tg.add_edge(year, ts_list[0])
+    if tg:
+        print(nx.is_tree(tg))
+        nx.draw_networkx(tg)
+        plt.show()
+        #pfad = r"C:\Users\janpa\Dropbox\Uni Master Digital Humanities\Semester 1 - Softwareprojekte, Graphentheorie & Weitere\2 Graphentheorie\graphen_projekt\graphs\tt"
+        #pfad = r"C:\Users\Jan\Dropbox\Uni Master Digital Humanities\Semester 1 - Softwareprojekte, Graphentheorie & Weitere\2 Graphentheorie\graphen_projekt\graphs\tt"
+        pfad = "graphs\tt"
+        pfad2 = pfad + str(counter) + ".graphml"
+        nx.write_graphml(tg, pfad2)
+    counter+=1
+
+#%%
+def getHandschriftenDateDict(item_elements):
+    handschriften_date_dict = {}
+    for element in item_elements:
+        uri_value = element.attributes["uri"].value
+        parent_node = element.parentNode
+        parent_node_name = element.parentNode.nodeName
+        if parent_node_name == "date":
+            attribute_names = parent_node.attributes.keys()
+            temp_handschrift_date_dict = {}
+            handschrift_name = uri_value
+            """
+            temp_dict = {}
+            for key in attribute_names:
+                if key == "notBefore":
+                    temp_dict["notBefore"] = parent_node.attributes["notBefore"].value
+                elif key == "notAfter":
+                    temp_dict["notAfter"] = parent_node.attributes["notAfter"].value
+            temp_handschrift_date_dict[handschrift_name] = temp_dict
+            """
+            temp_list = [None] * 3
+            for key in attribute_names:
+                if key == "notBefore":
+                    temp_list[0] = parent_node.attributes["notBefore"].value
+                elif key == "notAfter":
+                    temp_list[1] = parent_node.attributes["notAfter"].value
+                elif key == "when":
+                    temp_list[2] = parent_node.attributes["when"].value
+            temp_handschrift_date_dict[handschrift_name] = temp_list
+            handschriften_date_dict.update(temp_handschrift_date_dict)
+    return handschriften_date_dict  
