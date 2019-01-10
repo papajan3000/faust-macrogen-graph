@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><graph edgedefault="directed"><node id="faust://document/faustedition/H_P20"/>
+<node id="faust://document/faustedition/1_H.4"/>
+<node id="faust://document/faustedition/H_P82"/>
+<node id="faust://document/faustedition/1_H.3"/>
+<node id="faust://document/faustedition/A"/>
+<node id="1797"/>
+<node id="faust://document/faustedition/H_P50"/>
+<node id="faust://inscription/faustedition/H_P22/i_2_o"/>
+<node id="faust://inscription/faustedition/H_P22/i_2_u"/>
+<node id="faust://document/faustedition/2_V_H.15a"/>
+<node id="faust://document/faustedition/2_V_H.15b"/>
+<node id="faust://document/faustedition/H_P9"/>
+<node id="faust://document/bohnenkamp/H_P9a"/>
+<edge source="faust://document/faustedition/H_P20" target="faust://document/faustedition/1_H.4"/>
+<edge source="faust://document/faustedition/1_H.4" target="faust://document/faustedition/H_P82"/>
+<edge source="faust://document/faustedition/H_P82" target="faust://document/faustedition/1_H.3"/>
+<edge source="faust://document/faustedition/1_H.3" target="faust://document/faustedition/A"/>
+<edge source="1797" target="faust://document/faustedition/H_P20"/>
+<edge source="1797" target="faust://document/faustedition/H_P50"/>
+<edge source="1797" target="faust://document/faustedition/2_V_H.15a"/>
+<edge source="1797" target="faust://document/faustedition/H_P9"/>
+<edge source="faust://document/faustedition/H_P50" target="faust://inscription/faustedition/H_P22/i_2_o"/>
+<edge source="faust://inscription/faustedition/H_P22/i_2_o" target="faust://inscription/faustedition/H_P22/i_2_u"/>
+<edge source="faust://document/faustedition/2_V_H.15a" target="faust://document/faustedition/2_V_H.15b"/>
+<edge source="faust://document/faustedition/H_P9" target="faust://document/bohnenkamp/H_P9a"/>
+</graph></graphml>

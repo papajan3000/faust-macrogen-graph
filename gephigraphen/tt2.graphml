@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><graph edgedefault="directed"><node id="faust://document/faustedition/2_III_H.1"/>
+<node id="faust://inscription/fischer_lamberg/P170a/i_1_o"/>
+<node id="1800"/>
+<edge source="faust://document/faustedition/2_III_H.1" target="faust://inscription/fischer_lamberg/P170a/i_1_o"/>
+<edge source="1800" target="faust://document/faustedition/2_III_H.1"/>
+</graph></graphml>
