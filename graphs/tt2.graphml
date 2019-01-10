@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><graph edgedefault="directed"><node id="1800"/>
+<node id="11"/>
+<node id="faust://document/faustedition/H_P32"/>
+<node id="faust://document/faustedition/H_P62a"/>
+<node id="faust://document/faustedition/H_P30"/>
+<node id="faust://document/faustedition/1_H.14"/>
+<node id="faust://document/faustedition/H_P27"/>
+<node id="faust://document/faustedition/H_P28"/>
+<node id="faust://document/faustedition/H_P29"/>
+<node id="04"/>
+<node id="faust://document/faustedition/2_III_H.1"/>
+<node id="faust://inscription/wa/2_III_H.5/r/i_r_r"/>
+<node id="faust://document/faustedition/R_1"/>
+<node id="faust://document/faustedition/H_P1"/>
+<node id="faust://document/faustedition/H_P91"/>
+<node id="faust://document/faustedition/H_P98"/>
+<node id="faust://inscription/bohnenkamp/P10/i_3_u"/>
+<edge source="1800" target="11"/>
+<edge source="1800" target="04"/>
+<edge source="11" target="faust://document/faustedition/H_P32"/>
+<edge source="faust://document/faustedition/H_P32" target="faust://document/faustedition/H_P62a"/>
+<edge source="faust://document/faustedition/H_P62a" target="faust://document/faustedition/H_P30"/>
+<edge source="faust://document/faustedition/H_P30" target="faust://document/faustedition/1_H.14"/>
+<edge source="faust://document/faustedition/1_H.14" target="faust://document/faustedition/H_P27"/>
+<edge source="faust://document/faustedition/H_P27" target="faust://document/faustedition/H_P28"/>
+<edge source="faust://document/faustedition/H_P28" target="faust://document/faustedition/H_P29"/>
+<edge source="04" target="faust://document/faustedition/2_III_H.1"/>
+<edge source="faust://document/faustedition/2_III_H.1" target="faust://inscription/wa/2_III_H.5/r/i_r_r"/>
+<edge source="faust://inscription/wa/2_III_H.5/r/i_r_r" target="faust://document/faustedition/R_1"/>
+<edge source="faust://document/faustedition/R_1" target="faust://document/faustedition/H_P1"/>
+<edge source="faust://document/faustedition/H_P1" target="faust://document/faustedition/H_P91"/>
+<edge source="faust://document/faustedition/H_P91" target="faust://document/faustedition/H_P98"/>
+<edge source="faust://document/faustedition/H_P98" target="faust://inscription/bohnenkamp/P10/i_3_u"/>
+</graph></graphml>

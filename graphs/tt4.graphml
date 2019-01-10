@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><graph edgedefault="directed"><node id="1788"/>
+<node id="05"/>
+<node id="faust://document/faustedition/H_P13"/>
+<node id="01"/>
+<node id="faust://inscription/faustedition/H_P22/i_uebrige"/>
+<edge source="1788" target="05"/>
+<edge source="1788" target="01"/>
+<edge source="05" target="faust://document/faustedition/H_P13"/>
+<edge source="01" target="faust://inscription/faustedition/H_P22/i_uebrige"/>
+</graph></graphml>

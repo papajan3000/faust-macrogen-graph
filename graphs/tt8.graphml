@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><graph edgedefault="directed"><node id="1832"/>
+<node id="03"/>
+<node id="faust://document/fischer_lamberg/2_II_H.2_d"/>
+<edge source="1832" target="03"/>
+<edge source="03" target="faust://document/fischer_lamberg/2_II_H.2_d"/>
+</graph></graphml>
