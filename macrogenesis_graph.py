@@ -3,19 +3,18 @@
 import utils
 
 from xml.dom import minidom
-from datetime import datetime
-
 import networkx as nx
 import matplotlib.pyplot as plt
 import zipfile
 from collections import defaultdict
-
+from pathlib import Path
 
 #basepath = r"C:\Users\Jan\Dropbox\Uni Master Digital Humanities\Semester 1 - Softwareprojekte, Graphentheorie & Weitere\2 Graphentheorie\graphen_projekt\macrogenesis"
 #basepath = r"C:\Users\janpa\Dropbox\Uni Master Digital Humanities\Semester 1 - Softwareprojekte, Graphentheorie & Weitere\2 Graphentheorie\graphen_projekt\macrogenesis"
-basepath = "macrogenesis"
-pfad = basepath + "\handschriftendatierung_i.xml"
-zipfilepath = basepath + "\macrogenesis-normalized.zip" 
+
+basepath = Path('macrogenesis')
+pfad = basepath / "handschriftendatierung_i.xml"
+zipfilepath = basepath / "macrogenesis-normalized.zip" 
 ziparchive = zipfile.ZipFile(zipfilepath, "r")
 g = nx.DiGraph()
 
@@ -144,9 +143,10 @@ for year, dic in s_ym_handschriften.items():
             plt.show()
             #pfad = r"C:\Users\janpa\Dropbox\Uni Master Digital Humanities\Semester 1 - Softwareprojekte, Graphentheorie & Weitere\2 Graphentheorie\graphen_projekt\graphs\tt"
             #pfad = r"C:\Users\Jan\Dropbox\Uni Master Digital Humanities\Semester 1 - Softwareprojekte, Graphentheorie & Weitere\2 Graphentheorie\graphen_projekt\graphs\tt"
-            pfad = r"D:\informatik_programme\graphen_theorie\faust-macrogen-graph\graphs\tt"
-            pfad2 = pfad + str(counter) + ".graphml"
-            nx.write_graphml(tg, pfad2)
+            #pfad = r"D:\informatik_programme\graphen_theorie\faust-macrogen-graph\graphs\tt"
+            file = "tt" + str(counter) + ".graphml"
+            path = "graphs" + "/" + file
+            nx.write_graphml(tg, path)
     counter+=1
 
     
@@ -178,3 +178,4 @@ plt.show()
 #wieviel stark, schwach zusammenhängende Komponenten
 #tt7 z.b. immer noch schleifen drinne
 #source als kantengewicht hinzufügen (sowohl bei date als auch bei relation)
+
