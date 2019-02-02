@@ -1,5 +1,6 @@
 # faust-macrogen-graph
-Creation of a graph which represents an absolute order of the creation date of the manuscripts based on the macrogenesis of the digital Faust-Edition (http://www.faustedition.net/)
+Creation of a graph which represents an absolute order of the creation date of the manuscripts based on the macrogenesis of the digital Faust-Edition (http://www.faustedition.net/).
+To learn more about the problems of an absolute manuscript orde see: http://faustedition.net/intro_macrogenesis
 
 ## 1. xml file structure
 ### 1.1 date
