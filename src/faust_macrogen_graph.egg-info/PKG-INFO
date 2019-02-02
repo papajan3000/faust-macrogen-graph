@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: faust-macrogen-graph
+Version: 1.0.0
+Summary: Creation of a graph which represents an absolute order of the creation date of the manuscripts based on the macrogenesis of the digital Faust-Edition (http://www.faustedition.net/).
+Home-page: UNKNOWN
+Author: Jan Paulus
+Author-email: janpaulus95@web.de
+License: UNKNOWN
+Description: UNKNOWN
+Platform: UNKNOWN
