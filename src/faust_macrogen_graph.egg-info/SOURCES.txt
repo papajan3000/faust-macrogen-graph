@@ -1,12 +1,8 @@
 README.md
 setup.cfg
 setup.py
-src/a/__init__.py
-src/a/__main__.py
-src/a/utils.py
-src/faust-macrogen-graph/__init__.py
-src/faust-macrogen-graph/__main__.py
-src/faust-macrogen-graph/utils.py
+src/faust_macrogen_graph/__init__.py
+src/faust_macrogen_graph/utils.py
 src/faust_macrogen_graph.egg-info/PKG-INFO
 src/faust_macrogen_graph.egg-info/SOURCES.txt
 src/faust_macrogen_graph.egg-info/dependency_links.txt

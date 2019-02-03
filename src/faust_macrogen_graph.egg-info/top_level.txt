@@ -1,2 +1,1 @@
-a
-faust-macrogen-graph
+faust_macrogen_graph
