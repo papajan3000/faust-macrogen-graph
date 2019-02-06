@@ -1,33 +1,31 @@
 # -*- coding: utf-8 -*-
-from faust_macrogen_graph import utils
+from faust_macrogen_graph import parserutils, graphutils
 from pathlib import Path
-from xml.dom import minidom
+import networkx as nx
+import matplotlib.pyplot as plt
 
-    
-def xmlparser(path, absolute=False):
-    """Parses only xml-files inside a directory.
-    
-    Args:
-        path (str): Path to desired directory.
-        absolute (bool): If True, the parser parses <date>-elements, else it parses <relation>-elements.
-    Returns:
-        
-    """
-    xmltext_list = []
-    parsed_elements = None
-    for file in utils.generate_file_list(path):
-        xml_text = minidom.parse(str(file))
-        if absolute:
-            parsed_elements = xml_text.getElementsByTagName("date")
-        else:
-            parsed_elements = xml_text.getElementsByTagName("relation")
-            xmltext_list = utils.relation_items(parsed_elements, xmltext_list)
-            
-    return xmltext_list
-    
 filespath = Path('resources')
-#print(generate_file_list(filespath))
-print(len(xmlparser(filespath)))
+items = parserutils.xmlparser(filespath)
+print(items[2])
+#%%
 
 
+#TODO: remove the enumerate
+G = nx.DiGraph()
+for idx, t in enumerate(items):
+    if idx < 15:
+        graphutils.add_egdes_from_node_list(G, t)
+    else:
+        break
+  
+nx.draw_networkx(G)
+plt.show()
+
+print(nx.is_directed_acyclic_graph(G))
+
+
+
+#%%
+
+nx.write_graphml(G, "graphs/g4.graphml")
 

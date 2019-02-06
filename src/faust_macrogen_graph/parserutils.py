@@ -15,6 +15,7 @@ def generate_file_list(path, file_extension=".xml"):
     """
     return Path(path).glob("**/*{}".format(file_extension))
 
+#TODO: entshceidne ob no source richtige bezeichnung
 def relation_items(nodelist, items, temppre=True):
     """Returns an edited list of <item>-lists
     
@@ -30,11 +31,25 @@ def relation_items(nodelist, items, temppre=True):
     for element in nodelist:
         if element.getAttribute("name") == "temp-pre" and temppre:
             tmp_nodelist = []
+            tmp_sources = []
+            tmp_nodes = []
+            for child in element.childNodes:      
+                if child.nodeName == "source":
+                    tmp_sources.append(child.attributes["uri"].value)
+            
+            #if no source is given
+            if not tmp_sources:
+                tmp_sources.append("no source")
+                    
             for child in element.childNodes:
                 if child.nodeName == "item":
-                    uri_value = child.attributes["uri"].value
-                    tmp_nodelist.append(uri_value)
+                    tmp_nodes.append(child.attributes["uri"].value)
+            
+            tmp_nodelist.append(tmp_sources)    
+            tmp_nodelist.append(tuple(tmp_nodes))                   
             tmp_items.append(tuple(tmp_nodelist))
+            
+#TODO: von temppre gewichte übernehmen       
         elif element.getAttribute("name") == "temp-syn" and temppre==False:
             tmp_nodelist = []
             for child in element.childNodes:
@@ -63,5 +78,5 @@ def xmlparser(path, absolute=False):
         else:
             parsed_elements = xml_text.getElementsByTagName("relation")
             items = relation_items(parsed_elements, items)
-            
+
     return items
