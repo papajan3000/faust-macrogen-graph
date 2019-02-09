@@ -1,9 +1,9 @@
 # faust-macrogen-graph
-Creation of a graph which represents an absolute order of the creation date of the manuscripts based on the macrogenesis of the digital <b>Faust-Edition<b> (http://www.faustedition.net/).  
+Creation of a graph which represents an absolute order of the creation date of the manuscripts based on the macrogenesis of the digital <b>Faust-Edition</b> (http://www.faustedition.net/).  
 To learn more about the problems of an absolute manuscript order see: http://faustedition.net/intro_macrogenesis
 
 ## 1. The issue of manuscript macrogenesis
-The digital
+The digital <b>Faustedition</b> delivers manuscript of the novels <b>Faust</b> and <b>Faust II</b>.
 
 
 ## ?. xml file structure
