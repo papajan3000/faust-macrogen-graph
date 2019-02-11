@@ -1,348 +1,249 @@
-#%%
 import networkx as nx
 import matplotlib.pyplot as plt
-import operator
 from collections import deque
 
-def deltadegree(graph):
-    """deltadegree = in-degree - out_degree
-    """
-    delta_scores = {}
-    for node, in_degree in graph.in_degree:
-        delta_scores[node] = in_degree - graph.out_degree[node]
-    return delta_scores
+##############
+# Helper functions
+#############
 
-#TODO: ändern
-def node_degrees2(graph):
+def degrees(G):
     """
+    Args:
+    
+    Example:
+        >>> print(degrees(G))
+        {'A': [1, 2], 'B': [3, 2], 'C': [3, 1], 'D': [1, 2]}
     
     Returns:
-        Dict of nodes with the in_degree and out_degree of the node as values
+        Dict of nodes with the in_degree and out_degree of the node as values stored in a list
     """
     degrees = {}
-    for node, in_degree in graph.in_degree():
-        degrees[node] = [in_degree, graph.out_degree[node]]
+    for node in G.nodes():
+        degrees[node] = [G.in_degree(node), G.out_degree(node)]
     return degrees
 
-#TODO: bearbeiten, Variablen umbenennen
-# = gen_buckets
-def vertexsequence(graph):
+def deltadegrees(G):
     """
+    
+    Example:
+        >>> print(deltadegrees(G)
+        {'A': -1, 'B': 1, ''C': 2, 'D': -1})
+    
+    deltadegree = in-degree - out_degree
+    """
+    delta_scores = {}
+    for node, in_degree in G.in_degree:
+        delta_scores[node] = in_degree - G.out_degree[node]
+    return delta_scores
+
+#TODO: maybe rename because it isnt realy a vertexsequence
+def gen_vertexsequence(n_nodes, graph_nodes, degrees, deltadegrees):
+    """
+    Args:
+        n_nodes(int): number of nodes in a graph.
     Returns:
-        #Vertexsequence (list) sort by sources to sinks
+        Vertexsequence (multidimensional array) sorted by sources to sinks
         
     """
-    #vs = []
-    tmp_array = [[] for node in range((2 * graph.number_of_nodes()) - 1)] #empty [[], [], ...]
-    ndegrees = node_degrees2(graph)
-    delta_scores = deltadegree(graph)
-
-    for node in graph.nodes():
-        #check if node is a source
-        if ndegrees[node][0] == 0 and ndegrees[node][1] > 0: 
-            tmp_array[0].append(node)
-        #check if node is a sink
-        elif ndegrees[node][1] == 0 and ndegrees[node][0] > 0:
-            tmp_array[-1].append(node)
-        else:
-            deltascore = delta_scores[node]
-            #adding G.number_of_nodes()-1 because of doubled size of the tmp_array in comparsion to the number of nodes
-            tmp_array[(graph.number_of_nodes()-1) + deltascore].append(node)
-    #multidimensional tmp_array to onedimensional list
-    #for l in tmp_array:
-    #    if l:
-    #        vs.append(l)
-    return tmp_array
-
-
-G = nx.DiGraph()
-G.add_edge("A", "B")
-# G.add_edge("B", "A", weight=1.0)
-G.add_edge("B", "D")
-G.add_edge("D", "E")
-G.add_edge("C", "B")
-G.add_edge("D", "C")
-print(nx.is_directed_acyclic_graph(G))
-nx.draw_networkx(G)
-plt.show()
-print(vertexsequence(G))
-
-#%%
-def update_n(n_nodes, vs, removed_nodes, delta_scores, node_degrees, lowest, neighbours, parity=1, node=None):
-    parity = -1 if parity < 0 else 1 # normalise parity
-    mid = n_nodes - 1
-        
-    for node, _ in neighbours:
-        node = node if parity >= 0 else _
-        
-        if node in vs[0] or node in vs[-1] or node in removed_nodes: continue
+    vertexsequence = [[] for node in range((2 * n_nodes) - 1)] #empty [[], [], ...]
     
-        ind = mid + delta_scores[node]
-        
-        x = vs[ind].remove(node)
-        
-        delta_scores[node] += parity
-        _deg = 1 if parity >= 0 else 0
-        node_degrees[node][_deg] -= 1
-        
-        # Check if node becomes a sink/source or if it moves to an adjecent bucket
-        if node_degrees[node][_deg] > 0 and node_degrees[node][not _deg] > 0:
-            vs[delta_scores[node] + mid].append(node)
-        else:
-            vs[-1 if parity > 0 else 0].append(node)
-        
-        # Track the min in O(1) amortised
-        # (if the bucket with the min becomes null it means the min has been moved up by one)
-        if not vs[int(lowest) + mid] or delta_scores[node] < int(lowest):
-            if node_degrees[node][_deg] > 0 and node_degrees[node][not _deg] > 0:
-                lowest = delta_scores[node]
+    if len(graph_nodes) == 1:
+        for node in graph_nodes:
+            vertexsequence[0].append(node)
+    else:
     
-    if not vs[int(lowest)+mid] and len(removed_nodes) < n_nodes:
-        lowest = min([delta_scores[x] for x in delta_scores if x not in removed_nodes])
-        
-    return n_nodes, vs, neighbours, removed_nodes, delta_scores, node_degrees
-        
-    
-
-def eades_fas(graph):
-    
-    delta_scores = deltadegree(graph)
-    
-    
-    vs = vertexsequence(graph)
-    
-    
-    node_degrees = node_degrees2(graph)
-    #TODO: remove
-    #vs = buckets
-    n_nodes = graph.number_of_nodes()
-    s1 = deque()
-    s2 = deque()
-    removed_nodes = set()
-    
-    while (len(removed_nodes) < n_nodes):
-        
-        while(vs[-1]):
-            if vs[-1]:
-                sink = vs[-1][0]
-                s2.appendleft(sink)
-                
-                #update_buckets
-                #self.update_buckets(self.buckets[ind].pop(0))
-                current_node = vs[-1].pop(0)
-                lowest = min(float(delta_scores[current_node]), float("inf"))
-
-                
-                
-                n_nodes, vs, removed_nodes, delta_scores, node_degrees, lowest = update_n(n_nodes, vs, removed_nodes, 
-                                                                                              delta_scores, node_degrees, lowest,
-                                                                                              list(graph.in_edges(current_node)), 1, current_node)
-                n_nodes, vs, removed_nodes, delta_scores, node_degrees, lowest = update_n(n_nodes, vs, removed_nodes, 
-                                                                                              delta_scores, node_degrees, lowest,
-                                                                                              list(graph.out_edges(current_node)), -1, current_node)
-                #self.update_neighbours(list(self.G.in_edges(node)), 1, node) # update buckets for ingoing nodes to node
-                #self.update_neighbours(list(self.G.out_edges(node)), -1, node) # update buckets for outgoing nodes to node
-
-            #del delta_scores[sink]
-            #vs[-1].pop(0)
-            #n_nodes = n_nodes - 1
-            
-        while(vs[0]):
-            source = vs[0][0]
-            s1.append(source)
-            current_node = vs[0].pop(0)
-            lowest = min(float(delta_scores[current_node]), float("inf"))
-            n_nodes, vs, removed_nodes, delta_scores, node_degrees = update_n(n_nodes, vs, removed_nodes, 
-                                                                                              delta_scores, node_degrees, 
-                                                                                              list(graph.in_edges(current_node)), 1, current_node)
-            n_nodes, vs, removed_nodes, delta_scores, node_degrees = update_n(n_nodes, vs, removed_nodes, 
-                                                                                              delta_scores, node_degrees, 
-                                                                                              list(graph.out_edges(current_node)), -1, current_node)
-            #del delta_scores[source]
-            #vs[0].pop(0)
-            #n_nodes = n_nodes - 1
-            
-        if len(removed_nodes) < n_nodes:
-            
-            lowest = min(float(delta_scores[current_node]), float("inf"))
-            index = (n_nodes-1) + int(lowest)
-            
-            if index < 0 or index >= len(vs) - 1:
-                s2.appendleft(vs[index][0])
+        for node in graph_nodes:
+            #check if node is a source
+            if degrees[node][0] == 0 and degrees[node][1] > 0: 
+                vertexsequence[0].append(node)
+            #check if node is a sink
+            elif degrees[node][1] == 0 and degrees[node][0] > 0:
+                vertexsequence[-1].append(node)
+            #if node is neither a source nor a sink, add the nodes to the sequence:
+            # - nodes with a lower deltadegree more to the "left"
+            # - nodes with a higher deltadegree more to the "right"
             else:
-                s1.append(vs[index][0])
-            
-            current_node = vs[index].pop(0)
-            
-            n_nodes, vs, removed_nodes, delta_scores, node_degrees, lowest = update_n(n_nodes, vs, removed_nodes, 
-                                                                                              delta_scores, node_degrees, lowest,
-                                                                                              list(graph.in_edges(current_node)), 1, current_node)
-            
-            """
-            maximum_node = search_maximum_degree(delta_scores)
-            s1.append(maximum_node)
-            del delta_scores[maximum_node]
-            for i, l in enumerate(vs):
-                for idx, node in enumerate(l):
-                    if node == maximum_node:
-                        vs[i].pop(idx)
-                        break
+                deltavalue = deltadegrees[node]
+                #adding G.number_of_nodes()-1 because of doubled size of the tmp_array in comparsion to the number of nodes
+                try:
+                    vertexsequence[(n_nodes-1) + deltavalue].append(node)
+                except:
+                    break
 
-            
-            n_nodes = n_nodes - 1
-            """
+    return vertexsequence
+
+
+#############
+# EADES GREEDY ALGORITHM
+#############
+
+def eades_GR(vertexsequence, G, deltamaximum=True):
+    """
+        Args:
+            vertexsequence ():
+            G (DiGraph): A Directed Graph with cycles.
+        Returns:
+            Vertexsequence
+    """
     
-    s1 = deque(s1)
-    s = s1.extend(s2)
-    return s
+    G = G.copy()
+    s1 = deque() #right
+    s2 = deque() #left
+    n_nodes = G.number_of_nodes() #fix number of Graph nodess
+    removed_nodes = []
+    
+    while len(removed_nodes) < n_nodes:
+        
+        #access the end of the vertexsequence where the sinks are stored
+        try:
+            while vertexsequence[-1]:
+                if vertexsequence[-1]:
+                    try:
+                        sink = vertexsequence[-1][0]
+                        s2.appendleft(sink)
+                        G.remove_node(sink)
+                        removed_nodes.append(sink)
+                        vertexsequence[-1].pop(0)
+                        vertexsequence = gen_vertexsequence(n_nodes, G.nodes(), degrees(G), deltadegrees(G))
+                    except KeyError:
+                        break
+        except IndexError:
+            pass
+                
+        
+        try:
+        #access the beginning of the vertexsequence where the source are stored    
+            while vertexsequence[0]:
+                if vertexsequence[0]:
+                    try:
+                        source = vertexsequence[0][0] 
+                        s1.append(source)
+                        G.remove_node(source)
+                        removed_nodes.append(source)
+                        vertexsequence[0].pop(0)
+                        vertexsequence = gen_vertexsequence(n_nodes, G.nodes(), degrees(G), deltadegrees(G))
+                    except KeyError:
+                        break
+        except IndexError:
+            pass
+                
+        if len(removed_nodes) < n_nodes:
+            delta_degrees = deltadegrees(G)
+            
+            if deltamaximum:
+                delta_degree_node = max(delta_degrees, key=delta_degrees.get)
+            else:
+                delta_degree_node = min(delta_degrees, key=delta_degrees.get)
+            s1.append(delta_degree_node)
+            G.remove_node(delta_degree_node)
+            removed_nodes.append(delta_degree_node)
+            
+        vertexsequence = gen_vertexsequence(n_nodes, G.nodes(), degrees(G), deltadegrees(G))
 
-G = nx.DiGraph()
-G.add_edge("A", "B")
-# G.add_edge("B", "A", weight=1.0)
-G.add_edge("B", "D")
-G.add_edge("D", "E")
-G.add_edge("C", "B")
-G.add_edge("D", "C")
-print(nx.is_directed_acyclic_graph(G))
-nx.draw_networkx(G)
-plt.show()
-print(vertexsequence(G))
+  
+    return s1+s2
+
 
 #%%
-def search_maximum_degree(delta_scores):
-    return max(delta_scores.items(), key=operator.itemgetter(1))[0]
+########
+# Building graph from vertexsequence
+########
 
-def edgelist_from_vertexsequence(vertexsequence, edges):
-    """
-        Args: 
-            vertexsequence
-            edges (list with tupels): List with edge-tupels from a graph.
-            
-        Returns:
-            
-    """
-    edgelist = []
-    #removed_edges = []
-    vs = vertexsequence.copy()
-    for idx, node in enumerate(vs):
-        n = idx + 1
-        while(n < len(vs)):
-            nxt_node = vs[(n) % len(vs)]
-            t = (node, nxt_node)
-            rt = t[::-1] #backward edge
-            #no backward edges
-            if t in edges and rt not in edgelist:
-                edgelist.append(t)
-                
-            n += 1
-            
-    return edgelist
-"""
-def removed_edges(edgelist, edges):
-    removed_edges = []
-    for edge in edges:
-        if edge not in edgelist:
-            removed_edges.append(edge)
-            
-    return removed_edges
-#, removed_edges
-"""
-
-def ev(vs, graph, uG):
+def graph_from_vertexsequence(s, G):
+    order = {x: i for i, x in enumerate(s)} #{'A': 0, 'B': 1, 'D': 2, 'C': 3, 'E': 4}
+    GG = G.to_undirected()
     
-    vs = deque(vs)
-    #TODO: weg, ändern oder löschen
-    order = {x: i for i, x in enumerate(vs)}
-    #uG = graph.to_undirected()
-    starting_nodes = [node.pop() for node in nx.connected_components(uG)] #in case of more than one component of the graph
-    visited = set([vs[0]])
-    removed_edges = []
+    #in case of more than one components of GG
+    starting_points = [x.pop() for x in nx.connected_components(GG)] #[c, c]
     
-    for node in starting_nodes:
-        q = deque([node])
+    visited = set([s[0]]) #{A}
+    #TODO: rename
+    violator_set = []
+    
+    #TODO: rename s_0
+    for s_0 in starting_points:
+        #TODO: rename  q; maybe queue
+        q = deque([s_0])
         while q:
-            current_node = q.pop()
-            #TODO: change ...
-            #had to revert the edges for ...
-            node_in_edges = [(u, v) for v, u in graph.in_edges(current_node)]
-            node_all_edges = list(graph.out_edges(current_node)) + node_in_edges
-            
-            for _, u in node_all_edges:
-                if order[u] < order[current_node]:
-                    #t = (current_node, u)
+            cur_node = q.pop()
+            #reversed in edges --> why?
+            in_edges = [(x,y) for y,x in G.in_edges(cur_node)] #[('C', 'D')]
+            edges = list(G.out_edges(cur_node)) + in_edges #[('C', 'B'), ('C', 'D')]
+            #TODO: change to tuple??
+            for (y, x) in edges:
+                #x = edge[1]
+                #check if backward edge
+                if order[x] < order[cur_node]: #o[x = "B", "D"] = 1, o["C"] = 3
                     try:
-                        if (current_node, u) not in removed_edges:
-                            #TODO: ändern, löschen
-                            print("böse kante")
-                            print((current_node, u))
-                            removed_edges.append((current_node, u))
+                        if (cur_node, x, G[cur_node][x]["weight"]) not in violator_set:
+                            print("violator edge: {0}-{1}".format(cur_node, x))
+                            violator_set.append((cur_node, x, G[cur_node][x]["weight"]))
                     except KeyError:
                         pass
-                if u not in visited:
-                    q.append(u)
-                    visited.add(u)
-    removed_edges = set(removed_edges)           
-    for u, v in removed_edges:
-        graph.remove_edge(u, v)
-        
-    return graph
-            
+                #add the visited node from current nodes to the visited-set
+                if x not in visited:
+                    q.append(x)
+                    visited.add(x)
+    violator_set = set(violator_set)
+
+    
+    return violator_set
+
+
+def eades_FAS(G, deltamaximum):
+    """
+    
+    Returns:
+        list of edges which can be removed from a graph to make it acyclic
+    """
+    n_nodes = G.number_of_nodes()
+    graph_nodes = G.nodes()
+    node_degrees =  degrees(G)
+    delta_degrees = deltadegrees(G)
+    vertexsequence = gen_vertexsequence(n_nodes, graph_nodes, node_degrees, delta_degrees)
+    s = eades_GR(vertexsequence, G, deltamaximum)
+    fas = graph_from_vertexsequence(s, G.copy())
+    
+    return fas
+
+
 #%%
-G=nx.gn_graph(8)
-G.add_edge(7, 1)
-G.add_edge(7, 3)
-G.add_edge(7, 5)
-G.add_edge(1, 7)
-print(nx.is_directed_acyclic_graph(G))
-nx.draw_networkx(G)
-plt.show()
-"""
-GG = G.to_undirected()
-nx.draw_networkx(GG)
-plt.show()
-starting_points = [print(x) for x in nx.connected_components(GG)]
-print(nx.connected_components(GG))
-"""
-#%%
+#####
+# Creating Graph
+#####
+
 G = nx.DiGraph()
-G.add_edge("A", "B")
-# G.add_edge("B", "A", weight=1.0)
-G.add_edge("B", "D")
-G.add_edge("D", "E")
-G.add_edge("C", "B")
-G.add_edge("D", "C")
+
+G.add_edge("A", "B", weight=1.0)
+G.add_edge("A", "F", weight=1.0)
+G.add_edge("B", "I", weight=1.0)
+G.add_edge("B", "J", weight=1.0)
+G.add_edge("C", "B", weight=1.0)
+G.add_edge("D", "A", weight=1.0)
+G.add_edge("D", "C", weight=1.0)
+G.add_edge("E", "G", weight=1.0)
+G.add_edge("F", "C", weight=1.0)
+G.add_edge("F", "D", weight=1.0)
+G.add_edge("G", "C", weight=1.0)
+G.add_edge("H", "B", weight=1.0)
+G.add_edge("H", "G", weight=1.0)
+G.add_edge("H", "L", weight=1.0)
+G.add_edge("J", "H", weight=1.0)
+G.add_edge("L", "E", weight=1.0)
+G.add_edge("M", "L", weight=1.0)
+
+nx.draw_networkx(G)
+plt.show()
 print(nx.is_directed_acyclic_graph(G))
+"""
+G = nx.DiGraph()
+G.add_edge("A", "B", weight=1.0)
+G.add_edge("B", "D", weight=1.0)
+G.add_edge("D", "E", weight=1.0)
+G.add_edge("C", "B", weight=1.0)
+G.add_edge("D", "C", weight=1.0)
 nx.draw_networkx(G)
 plt.show()
-#%%
-print(eades_fas(G.copy()))
-#%%
-vs = eades_fas(G.copy())
-ng = ev(vs, G.copy(), G.copy().to_undirected())
-print(nx.is_directed_acyclic_graph(ng))
-nx.draw_networkx(ng)
-plt.show()
-#%%
-vs = eades_fas(G)
-print(vertexsequence(vs))
-#%%
-edges = G.edges()
-print(edges)
-edgelist = edgelist_from_vertexsequence(vs, list(edges))
-print(edgelist)
-print("removed edges")
-print(removed_edges(edgelist, edges))
-#%%
-G2 = nx.DiGraph()
-G2.add_edges_from(edgelist)
-print(nx.is_directed_acyclic_graph(G2))
-nx.draw_networkx(G2)
-plt.show()
+print(nx.is_directed_acyclic_graph(G))
+"""
 
-#TODO: rename vertex sequence function
-#TODO: edgelist_from_vertexsequence doesnt' work 
-#%%
-
-print(eades_fas(G.copy()))
-nx.draw_networkx(G)
-plt.show()
