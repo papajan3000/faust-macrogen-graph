@@ -4,7 +4,7 @@ def add_egdes_from_node_list(graph, node_list):
     """Add an edge from every node of a list of nodes to the next node in the list with the source as edge attribute.
     
     Args:
-        graph (digraph): DiGraph-Object of networkx.
+        graph (DiGraph): DiGraph-Object of networkx.
         node_list (tuple): 2-tuple, where the first item is a list of sources and the second item a tuple of nodes in a given order.
     Returns:
         Enhanced input-graph with the nodes and edges of the node_list and the source as edge attribute.
@@ -23,5 +23,5 @@ def add_egdes_from_node_list(graph, node_list):
         if current_node == next_node:
             pass
         else:
-            new_graph.add_edge(current_node, next_node,source=source_name)
+            new_graph.add_edge(current_node, next_node, weight=1.0, source=source_name)
     return new_graph   
