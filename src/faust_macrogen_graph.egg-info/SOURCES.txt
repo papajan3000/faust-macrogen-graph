@@ -2,6 +2,8 @@ README.md
 setup.cfg
 setup.py
 src/faust_macrogen_graph/__init__.py
+src/faust_macrogen_graph/baharev_fas.py
+src/faust_macrogen_graph/eades_fas.py
 src/faust_macrogen_graph/graphutils.py
 src/faust_macrogen_graph/parserutils.py
 src/faust_macrogen_graph.egg-info/PKG-INFO

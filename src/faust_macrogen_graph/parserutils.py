@@ -11,7 +11,6 @@ def generate_file_list(path, file_extension=".xml"):
         file_extension (str): File extension to search for.
     Returns:
         Generator which contains Path objects to all XML files in the given directory and its subdirectories.
-        
     """
     return Path(path).glob("**/*{}".format(file_extension))
 
@@ -25,7 +24,6 @@ def relation_items(nodelist, items, temppre=True):
         temppre (bool): If True, the function only adds temp-pre child-items, else it adds temp-syn child-items.
     Returns:
         Edited list of <item>-lists.
-    
     """
     tmp_items = items
     for element in nodelist:
@@ -60,6 +58,7 @@ def relation_items(nodelist, items, temppre=True):
         
     return tmp_items
 
+#TODO: docstring
 def xmlparser(path, absolute=False):
     """Parses only xml-files inside a directory.
     
@@ -68,6 +67,7 @@ def xmlparser(path, absolute=False):
         absolute (bool): If True, the parser parses <date>-elements, else it parses <relation>-elements.
     Returns:
         
+   
     """
     items = []
     parsed_elements = None
