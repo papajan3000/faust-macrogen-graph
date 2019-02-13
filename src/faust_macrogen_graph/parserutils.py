@@ -14,9 +14,10 @@ def generate_file_list(path, file_extension=".xml"):
     """
     return Path(path).glob("**/*{}".format(file_extension))
 
+#TODO: docstring
 #TODO: entshceidne ob no source richtige bezeichnung
-def relation_items(nodelist, items, temppre=True):
-    """Returns an edited list of <item>-lists
+def relation_items(nodelist, items, temppre):
+    """Returns an edited list of <item>-lists.
     
     Args:
         nodelist (NodeList): NodeList of <relation>-Elements.
@@ -25,9 +26,15 @@ def relation_items(nodelist, items, temppre=True):
     Returns:
         Edited list of <item>-lists.
     """
+    
+    if temppre:
+        relation_name = "temp-pre"
+    else:
+        relation_name = "temp-syn"
+    
     tmp_items = items
     for element in nodelist:
-        if element.getAttribute("name") == "temp-pre" and temppre:
+        if element.getAttribute("name") == relation_name:
             tmp_nodelist = []
             tmp_sources = []
             tmp_nodes = []
@@ -46,27 +53,21 @@ def relation_items(nodelist, items, temppre=True):
             tmp_nodelist.append(tmp_sources)    
             tmp_nodelist.append(tuple(tmp_nodes))                   
             tmp_items.append(tuple(tmp_nodelist))
-            
-#TODO: von temppre gewichte übernehmen       
-        elif element.getAttribute("name") == "temp-syn" and temppre==False:
-            tmp_nodelist = []
-            for child in element.childNodes:
-                if child.nodeName == "item":
-                    uri_value = child.attributes["uri"].value
-                    tmp_nodelist.append(uri_value)
-            tmp_items.append(tuple(tmp_nodelist))
         
     return tmp_items
 
+#TODO: add items = date_items
 #TODO: docstring
-def xmlparser(path, absolute=False):
-    """Parses only xml-files inside a directory.
+def xmlparser(path, absolute=False, temppre=True):
+    """Parses only xml-files inside a directory and returns a list with tuples which contain either relative dates or 
+        absolute dates of a manuscript.
     
     Args:
         path (str): Path to desired directory.
         absolute (bool): If True, the parser parses <date>-elements, else it parses <relation>-elements.
+        temppre (bool): If True, the function only adds temp-pre child-items, else it adds temp-syn child-items.
     Returns:
-        
+        List with tupels which contain either relative dates or absolute dates of a manuscript.
    
     """
     items = []
@@ -77,6 +78,6 @@ def xmlparser(path, absolute=False):
             parsed_elements = xml_text.getElementsByTagName("date")
         else:
             parsed_elements = xml_text.getElementsByTagName("relation")
-            items = relation_items(parsed_elements, items)
+            items = relation_items(parsed_elements, items, temppre)
 
     return items
