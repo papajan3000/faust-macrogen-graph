@@ -1,48 +1,39 @@
+#%%
 # -*- coding: utf-8 -*-
 from faust_macrogen_graph import parserutils, graphutils, eades_fas
 from pathlib import Path
 import networkx as nx
 import matplotlib.pyplot as plt
 
+#####
+# preparation of XML file by parsing and collecting specific elements
+#####
 
 filespath = Path('resources')
 temppre_items = parserutils.xmlparser(filespath)
 tempsyn_items = parserutils.xmlparser(filespath, False, False)
 date_items = parserutils.xmlparser(filespath, True)
-print(temppre_items[:2])
-print("---")
-print(date_items[10:12])
-print(type(date_items))
+
 #%%
 #####
 # graph for tempsyn <relation>-elements
 #####
 
-#tpG = temppre Graph
 tempsynG = nx.DiGraph()
 for t in tempsyn_items:
     graphutils.add_egdes_from_node_list(tempsynG, t)
-
-pos = nx.shell_layout(tempsynG)
-nx.draw_networkx_nodes(tempsynG, pos)
-nx.draw_networkx_labels(tempsynG, pos)
-nx.draw_networkx_edges(tempsynG, pos)    
-    
-#nx.draw_networkx(tempsynG)
-plt.show()
-print(nx.is_directed_acyclic_graph(tempsynG))
-
-
 #%%
+#####
+# fas graph tempsyn <relation>-elements
+#####
+nx.is_directed_acyclic_graph(tempsynG)
+    
 tempsynG_fas = eades_fas.eades_FAS(tempsynG, True) # seven percent of the edges of tpG are in the FAS
-print(tempsynG_fas)
 
 #atempysnG = acyclic tempsyn Graph
 atempsynG = tempsynG.copy()
 atempsynG.remove_edges_from(tempsynG_fas)
-nx.draw_networkx(atempsynG)
-plt.show()
-print(nx.is_directed_acyclic_graph(atempsynG))
+nx.is_directed_acyclic_graph(atempsynG)
 
 
 #%%
@@ -50,17 +41,14 @@ print(nx.is_directed_acyclic_graph(atempsynG))
 # graph for temppre <relation>-elements
 #####
 
-#tpG = temppre Graph
 temppreG = nx.DiGraph()
 for t in temppre_items:
     graphutils.add_egdes_from_node_list(temppreG, t)
 
-
-nx.draw_networkx(temppreG)
-plt.show()
-
-
 #%%
+#####
+# fas graph for temppre <relation>-elements
+#####
 temppreG_fas = eades_fas.eades_FAS(temppreG, True) # seven percent of the edges of tpG are in the FAS
 
 #atemppreG = acyclic temppre Graph
@@ -69,7 +57,30 @@ atemppreG.remove_edges_from(temppreG_fas)
 
 
 #%%
+#####
+# graph for <date> elements
+#####
 
+
+wissenbach_d = graphutils.dates_wissenbach(date_items)
+        # structure: (manuscript, (date, source))
+wissenbach_ds = [(k, wissenbach_d[k]) for k in sorted(wissenbach_d, key=wissenbach_d.get, reverse=False)]
+print(wissenbach_ds[1])
+#%%
+for k, v in graphutils.dates_vitt(date_items).items():
+    print(v)
+    
+#%%
+dateG = graphutils.graph_from_dates(date_items, "vitt")
+print(nx.is_directed_acyclic_graph(dateG))
+nx.draw_networkx(dateG)
+
+
+
+#%%
+#####
+# norm the witnesses scores of the witnesses of the new temppre and tempsyn graphs
+#####
 syn_nws = graphutils.get_norm_witness_score(atempsynG)
 pre_nws = graphutils.get_norm_witness_score(atemppreG)
 

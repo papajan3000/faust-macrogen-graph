@@ -1,4 +1,5 @@
 #%%
+#TODO: docstrings
 import networkx as nx
 from collections import Counter
 import re
@@ -101,6 +102,42 @@ def dates_wissenbach(date_items):
     return wissenbach_dict
 
 
+def dates_vitt(date_items):
+    """
+    """
+    vitt_dict = {}
+    
+    for item in date_items:
+        source_name = item[0][0]
+        manuscript = item[1][0]
+        dates_dict = item[2]
+        
+        notbefore = dates_dict["notBefore"]
+        notafter = dates_dict["notAfter"]
+        when = dates_dict["when"]
+        
+        start_date = "-"
+        end_date = "-"
+        
+        if when != "-":
+            start_date = datetime.strptime(dates_dict["when"], '%Y-%m-%d')
+            vitt_dict[manuscript] = (start_date, source_name, 100.0)
+        elif notafter == "-" and notbefore != "-":
+            start_date = datetime.strptime(dates_dict["notBefore"], '%Y-%m-%d')
+            vitt_dict[manuscript] = (start_date, source_name)
+        elif notbefore == "-" and notafter != "-":
+            start_date = datetime.strptime(dates_dict["notAfter"], '%Y-%m-%d')
+            vitt_dict[manuscript] = (start_date, source_name)
+        elif notbefore != "-" and notafter != "-":
+            start_date = datetime.strptime(notbefore, '%Y-%m-%d')
+            end_date = datetime.strptime(notafter, '%Y-%m-%d')
+            #TODO: zu lazy, vernünftiges datenmodell
+            vitt_dict[manuscript] = (start_date, source_name, 1.0, end_date)
+    
+    return vitt_dict
+
+
+
 def dates_paulus(date_items, notbeforedate=True):
     """
     notBefore + when
@@ -170,25 +207,20 @@ def add_edges_from_dates_list(G, dates_list):
     """
     """
     nG = G
-    for index, t in enumerate(dates_list):
+    for t in dates_list:
+        
+        manuscript = t[0]
         date_item = t[1][0]
         source_name = t[1][1]
-        
-        current_node = t[0]
-        next_node = dates_list[(index + 1) % len(dates_list)]
-        
-        if next_node == dates_list[0][0]:
-            break
-        
-        #no loop
-        if current_node == next_node:
-            pass
+
+        #in case of special case of Paulus approaches where @when attribute gets a higher weight
+        if len(t[1]) == 3:
+            nG.add_edge(str(date_item), manuscript, weight=t[1][2], source=source_name)
+        elif len(t[1]) == 4:
+            nG.add_edge(str(date_item), manuscript, weight=1.0, source=source_name)
+            nG.add_edge(manuscript, str(t[1][3]), weight=1.0, source=source_name)
         else:
-            #in case of special case of Paulus approaches where @when Attiribute get a higher weight
-            if len(t[1]) == 3:
-                nG.add_edge(current_node, next_node, weight=t[1][2], source=source_name, date=date_item)
-            else:
-                nG.add_edge(current_node, next_node, weight=1.0, source=source_name, date=date_item)
+            nG.add_edge(str(date_item), manuscript, weight=1.0, source=source_name)
     return nG
         
         
@@ -209,9 +241,10 @@ def graph_from_dates(date_items, approach):
         # structure: (manuscript, (date, source))
         wissenbach_ds = [(k, wissenbach_d[k]) for k in sorted(wissenbach_d, key=wissenbach_d.get, reverse=False)]
         G = add_edges_from_dates_list(G, wissenbach_ds)
-        
     elif approach == "vitt":
-        ...
+        vitt_d = dates_vitt(date_items)
+        vitt_ds = [(k, vitt_d[k]) for k in sorted(vitt_d, key=vitt_d.get, reverse=False)]
+        G = add_edges_from_dates_list(G, vitt_ds)
     #only "notBefore" and "when" nodes, but "when"-nodes got higher weight
     elif approach == "paulus-1":
         paulus1_d = dates_paulus(date_items)
@@ -228,50 +261,6 @@ def graph_from_dates(date_items, approach):
     
     return G
     
-    
-filespath = Path('resources')
-date_items = parserutils.xmlparser(filespath, True)
-print(date_items)
-
-#%%
-G = graph_from_dates(date_items, "paulus-1")
-
-pos = nx.shell_layout(G)
-nx.draw_networkx_nodes(G, pos)
-nx.draw_networkx_labels(G, pos)
-nx.draw_networkx_edges(G, pos)    
-    
-#nx.draw_networkx(tempsynG)
-plt.show()
-
-#%%
-print(len(G.edges()))
-print(nx.is_directed_acyclic_graph(G))
-#%%
-for edge in G.edges():
-    d = G.get_edge_data(edge[0],edge[1])
-    print(d["weight"])
-
-ł#%%
-wissenbach_d = dates_wissenbach(date_items)
-wissenbach_ds = [(k, wissenbach_d[k]) for k in sorted(wissenbach_d, key=wissenbach_d.get, reverse=False)]
-print(wissenbach_ds[10])
-#%%
-
-G = graph_from_dates(date_items, "wissenbach")
-
-pos = nx.shell_layout(G)
-nx.draw_networkx_nodes(G, pos)
-nx.draw_networkx_labels(G, pos)
-nx.draw_networkx_edges(G, pos)    
-    
-#nx.draw_networkx(tempsynG)
-plt.show()
-#%%
-
-print(len(G.nodes()))
-print(nx.is_directed_acyclic_graph(G))
-
 
 #%%
 
@@ -292,7 +281,7 @@ def get_witness_score(G):
 
 
 
-def get_norm_witness_score(s, min_range=1700, max_range=2020):
+def get_norm_witness_score(G, min_range=1700, max_range=2020):
     """Normalize the score of a given Counter of witnesses and their score. The score is computed as following: 
             Number of the witnesses work mentioned in the macrogenesis * normalized year of publication of witnessess work about Faust
             e.g.: Bohnenkamp 1994 --> 94 * ((1994 - 1700) / (2020 - 1700)) = 94 * 0.91875 = 86.3625
@@ -300,13 +289,13 @@ def get_norm_witness_score(s, min_range=1700, max_range=2020):
         of a comparison between two possible conflicting statements of witnesses about a different dating of manuscripts.
         
     Args:
-        s (String): String which represents a witness.
+        G (DiGraph): DiGraph-Object of networkx.
         min_range (int): Lower border of the normalization function.
         max_range (int): Upper border of the normalization function.
     Returns:
         Counter with a normalized score assigned to each witness.
     """
-    
+    witness_score = get_witness_score(G)
     #gsa-datenbank random value because no real year determinable
     #faust//self same
     special_witnesses = {'faust://bibliography/wa_I_15_2': 1888, 
