@@ -1,6 +1,6 @@
 #%%
 # -*- coding: utf-8 -*-
-from faust_macrogen_graph import parserutils, graphutils, eades_fas
+from faust_macrogen_graph import parserutils, graphutils, eades_fas, absolute_graphutils, relative_graphutils
 from pathlib import Path
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -21,7 +21,7 @@ date_items = parserutils.xmlparser(filespath, True)
 
 tempsynG = nx.DiGraph()
 for t in tempsyn_items:
-    graphutils.add_egdes_from_node_list(tempsynG, t)
+    relative_graphutils.add_egdes_from_node_list(tempsynG, t)
 #%%
 #####
 # fas graph tempsyn <relation>-elements
@@ -43,7 +43,7 @@ nx.is_directed_acyclic_graph(atempsynG)
 
 temppreG = nx.DiGraph()
 for t in temppre_items:
-    graphutils.add_egdes_from_node_list(temppreG, t)
+    relative_graphutils.add_egdes_from_node_list(temppreG, t)
 
 #%%
 #####
