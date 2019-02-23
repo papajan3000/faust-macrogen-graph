@@ -46,7 +46,7 @@ def calc_cyclematrix(G):
 # main baharev fas
 #####
 
-def baharev_FAS(G):
+def baharev_FAS(G, fas):
     """
         Args:
             G (DiGraph): A Directed Graph (networkx DiGraph) with cycles and nonnegative edge weights.
