@@ -2,16 +2,24 @@
 #TODO: docstrings for all überprüfen
 #TODO: ^
 #TODO: |
+#TODO: Begriff witnesses austauschen!!!! sind ja keine Zeugen, sind "Quellen"
 import networkx as nx
 from collections import Counter
 import re
 from datetime import datetime
 
-#TODO: code überprüfen und evtl. nochmal vereinfachen
-#TODO: docstring
 def year_comparison(manuscript, existing_manuscript_source, source_name):
-    """
-    speical witnesses dates: http://faustedition.net/bibliography
+    """Checks if the year of an already existing manuscript source is greater or smaller than the year of a different source for the same 
+        manuscript. The greater year will be returned. If the year doesn't appear inside the witnesses name, the year of the special
+        witnesses dictionary will be taken (the dates are taken from the following website: http://faustedition.net/bibliography).
+    
+    Args:
+        manuscript (string): String of the manuscript.
+        existing_manuscript_source (string): Witness of the manuscript already in a dictionary.
+        source_name (string): Possible different witness for the same manuscript.
+        
+    Returns:
+        False if the year inside the existing_manuscript_source string is greater than the year in the source_name string.
     """
     greater = False
     
@@ -65,13 +73,14 @@ def year_comparison(manuscript, existing_manuscript_source, source_name):
     return greater
      
 
-#TODO: docstring
 def dates_wissenbach(date_items):
-    """
-    See resources/vitt_macrogen.pdf p. 12.
-    
+    """Generate a dictionary following the approach of Wissenbach (see: resources/vitt_macrogen.pdf, p. 12) where the middle of two dates
+        is concatenated with a manuscript instead of multiple dates.
+        
+        Args:
+            date_items (list): List of tupels with the following structure: ([source], (manuscript), {notBefore: year, notAfter: year, when: year}).
         Returns:
-            Dictionary 
+            Dictionary with the manuscripts as keys and 2-tuples as values with the structure (middle of date, source).
     """
     
     wissenbach_dict = {}
@@ -118,7 +127,14 @@ def dates_wissenbach(date_items):
 
 #TODO: überarbeiten
 def dates_vitt(date_items):
-    """
+    """Generate a dictionary following the approach of Vitt (see: resources/vitt_macrogen.pdf, p. 13) where the manuscripts and the dates
+        of the manuscripts are treated as nodes. If an exact date for a manuscript exists (@when), the manuscript gets a higher weight-value.
+        
+        Args:
+            date_items (list): List of tupels with the following structure: ([source], (manuscript), {notBefore: year, notAfter: year, when: year}).
+        Returns:
+            Dictionary with the manuscripts as keys and 2-,3- or 4-tuples as values with the structure (start_date, source_name) or
+            (start_date, source_name, 10.0) or (start_date, source_name, 1.0, end_date).
     """
     vitt_dict = {}
     
@@ -146,16 +162,22 @@ def dates_vitt(date_items):
         elif notbefore != "-" and notafter != "-":
             start_date = datetime.strptime(notbefore, '%Y-%m-%d')
             end_date = datetime.strptime(notafter, '%Y-%m-%d')
-            #TODO: zu lazy, vernünftiges datenmodell
             vitt_dict[manuscript] = (start_date, source_name, 1.0, end_date)
     
     return vitt_dict
 
 #TODO: bearbeiten
-#TODO: docstring
 def dates_paulus(date_items, notbeforedate=True):
-    """
-    notBefore + when
+    """Generate a dictionary following one of two approach of Paulus (author of this project) where the manuscripts and the dates
+        of the manuscripts are treated as nodes but only one date is connected with manuscript (there is a choice between @notBefore
+        or @notAfter dates). If an exact date for a manuscript exists (@when), the manuscript gets a higher weight-value.
+        
+        Args:
+            date_items (list): List of tupels with the following structure: ([source], (manuscript), {notBefore: year, notAfter: year, when: year}).
+            notbeforedate (bool): If True, the manuscripts will be connected with the @notBefore-Date, else with the @notAfter-Date.
+        Returns:
+            Dictionary with the manuscripts as keys and 2- or 3-tuples as values with the structure (start_date, source_name) or
+            (start_date, source_name, 10.0).
     """
     
     
@@ -195,8 +217,6 @@ def dates_paulus(date_items, notbeforedate=True):
             #if there is a conflict between two witnesses who classify the manuscript date differently, the newer one will be taken
             if manuscript in paulus_dict:
                 existing_manuscript_source = paulus_dict[manuscript][1]
-                
-                #if there is a conflict between two witnesses who classify the manuscript date differently, the newer one will be taken
                 greater = year_comparison(manuscript, existing_manuscript_source, source_name)
                 
                 if greater:
@@ -206,7 +226,6 @@ def dates_paulus(date_items, notbeforedate=True):
                         paulus_dict[manuscript] = (start_date, source_name)
                 else:
                     pass
-         
             else:
                 if when != "-":
                     paulus_dict[manuscript] = (start_date, source_name, 10.0)
