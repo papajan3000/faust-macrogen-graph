@@ -2,7 +2,6 @@
 #TODO: docstrings for all überprüfen
 #TODO: ^
 #TODO: |
-#TODO: Begriff witnesses austauschen!!!! sind ja keine Zeugen, sind "Quellen"
 import networkx as nx
 from collections import Counter
 import re
@@ -10,20 +9,20 @@ from datetime import datetime
 
 def year_comparison(manuscript, existing_manuscript_source, source_name):
     """Checks if the year of an already existing manuscript source is greater or smaller than the year of a different source for the same 
-        manuscript. The greater year will be returned. If the year doesn't appear inside the witnesses name, the year of the special
-        witnesses dictionary will be taken (the dates are taken from the following website: http://faustedition.net/bibliography).
+        manuscript. The greater year will be returned. If the year doesn't appear inside the researchers name, the year of the special
+        researchers dictionary will be taken (the dates are taken from the following website: http://faustedition.net/bibliography).
     
     Args:
         manuscript (string): String of the manuscript.
-        existing_manuscript_source (string): Witness of the manuscript already in a dictionary.
-        source_name (string): Possible different witness for the same manuscript.
+        existing_manuscript_source (string): Researcher of the manuscript already in a dictionary.
+        source_name (string): Possible different researchers for the same manuscript.
         
     Returns:
         False if the year inside the existing_manuscript_source string is greater than the year in the source_name string.
     """
     greater = False
     
-    special_witnesses = {'faust://bibliography/gsa-datenbank' : 1950, 
+    special_researchers = {'faust://bibliography/gsa-datenbank' : 1950, 
                          'faust://self' : 2000, 
                          'faust://bibliography/inventare_2_2': 2011, 
                          'faust://bibliography/aa_duw_2': 1974,
@@ -51,8 +50,8 @@ def year_comparison(manuscript, existing_manuscript_source, source_name):
             greater = True
         
     elif existing_year is None and actual_year is not None:
-        if existing_manuscript_source in special_witnesses:
-            existing_year = special_witnesses[existing_manuscript_source]
+        if existing_manuscript_source in special_researchers:
+            existing_year = special_researchers[existing_manuscript_source]
             actual_year = str(actual_year.group(1))
             
             if existing_year > actual_year:
@@ -61,9 +60,9 @@ def year_comparison(manuscript, existing_manuscript_source, source_name):
                 greater = True
                 
     elif existing_year is not None and actual_year is None:
-        if source_name in special_witnesses:
+        if source_name in special_researchers:
             existing_year = str(existing_year.group(1))
-            actual_year = special_witnesses[source_name]
+            actual_year = special_researchers[source_name]
             
             if existing_year > actual_year:
                 greater = False
@@ -113,7 +112,7 @@ def dates_wissenbach(date_items):
             if manuscript in wissenbach_dict:
                 existing_manuscript_source = wissenbach_dict[manuscript][1]
                 
-                #if there is a conflict between two witnesses who classify the manuscript date differently, the newer one will be taken
+                #if there is a conflict between two researchers who classify the manuscript date differently, the newer one will be taken
                 greater = year_comparison(manuscript, existing_manuscript_source, source_name)
                 
                 if greater:
@@ -214,7 +213,7 @@ def dates_paulus(date_items, notbeforedate=True):
         
         #not adding falsely tagged date-elements (6 elements exist)
         if start_date != "-":
-            #if there is a conflict between two witnesses who classify the manuscript date differently, the newer one will be taken
+            #if there is a conflict between two researchers who classify the manuscript date differently, the newer one will be taken
             if manuscript in paulus_dict:
                 existing_manuscript_source = paulus_dict[manuscript][1]
                 greater = year_comparison(manuscript, existing_manuscript_source, source_name)
