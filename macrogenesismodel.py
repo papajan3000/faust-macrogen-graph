@@ -15,39 +15,6 @@ tempsyn_items = parserutils.xmlparser(filespath, False, False)
 date_items = parserutils.xmlparser(filespath, True)
 
 #%%
-#TODO: woanders hin? analyze utils? vielleicht analyzeutils dahingehend umbennen?
-import re
-def special_witness_generator(item_list):
-    """Generate a list with witnesses out of all witnesses whose name doesn't include a publication year.
-    
-    Args:
-        item_list (list): List with date-, temppre- and tempsyn_items.
-    Returns:
-        List with special witnesses where the publication year can't be extracted from the name.
-    """
-    witnesses = []
-    for items in item_list:
-        for item in items:
-            witness_list = item[0]
-            for witness in witness_list:
-                if witness not in witnesses:
-                    witnesses.append(witness)
-    
-    special_witnesses = []
-    for w in witnesses:
-        match = re.match(r".*([1-3][0-9]{3})", w)
-        if match == None:
-            special_witnesses.append(w)
-    
-    
-    return special_witnesses
-
-
-a = special_witness_generator([date_items, tempsyn_items, temppre_items])
-
-print(a)
-
-#%%
 #####
 # graph for tempsyn <relation>-elements
 #####
@@ -112,10 +79,10 @@ nx.draw_networkx(dateG)
 
 #%%
 #####
-# norm the witnesses scores of the witnesses of the new temppre and tempsyn graphs
+# norm the researchers scores of the researchers of the new temppre and tempsyn graphs
 #####
-syn_nws = analyzeutils.get_norm_witness_score(atempsynG)
-pre_nws = analyzeutils.get_norm_witness_score(atemppreG)
+syn_nws = analyzeutils.get_norm_research_score(atempsynG)
+pre_nws = analyzeutils.get_norm_research_score(atemppreG)
 
 print("syn-nws: " + str(syn_nws))
 print("\n")
@@ -127,7 +94,10 @@ print("pre-nws: " + str(pre_nws))
 #
 # Aufgabe a, b, c machen?!
 #
-#
+#%%
+a = analyzeutils.get_norm_research_score(dateG)
+print(a)
+
 #%%
 
 fas_relation_overlap = []
