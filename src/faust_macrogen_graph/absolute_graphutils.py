@@ -41,8 +41,8 @@ def year_comparison(manuscript, existing_manuscript_source, source_name):
     actual_year = re.match(r".*([1-3][0-9]{3})", source_name)
             
     if existing_year is not None and actual_year is not None:
-        existing_year = str(existing_year.group(1))
-        actual_year = str(actual_year.group(1))
+        existing_year = int(existing_year.group(1))
+        actual_year = int(actual_year.group(1))
         
         if existing_year > actual_year:
             greater = False
@@ -52,7 +52,7 @@ def year_comparison(manuscript, existing_manuscript_source, source_name):
     elif existing_year is None and actual_year is not None:
         if existing_manuscript_source in special_researchers:
             existing_year = special_researchers[existing_manuscript_source]
-            actual_year = str(actual_year.group(1))
+            actual_year = int(actual_year.group(1))
             
             if existing_year > actual_year:
                 greater = False
@@ -61,7 +61,7 @@ def year_comparison(manuscript, existing_manuscript_source, source_name):
                 
     elif existing_year is not None and actual_year is None:
         if source_name in special_researchers:
-            existing_year = str(existing_year.group(1))
+            existing_year = int(existing_year.group(1))
             actual_year = special_researchers[source_name]
             
             if existing_year > actual_year:
