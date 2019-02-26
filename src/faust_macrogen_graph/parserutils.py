@@ -13,7 +13,7 @@ def generate_file_list(path, file_extension=".xml"):
     return Path(path).glob("**/*{}".format(file_extension))
 
 
-def date_items(nodelist, items):
+def date_items(nodelist, items, skipignore):
     """Expand the a list of items with a tuple for every <date>-element which is represented by the structure
         ([source], (@uri of <item>-element), {"notBefore": date, "notAfter": date, "when": date}). Non-existing
         attributes of <date> will be marked with a "-".
@@ -21,6 +21,7 @@ def date_items(nodelist, items):
     Args:
         nodelist (NodeList): NodeList of <date>-elements of a XML document.
         items (list): List of <date>-element-tuples.
+        skipignore (bool): If True, <date>-elements with the @ignore=yes attribute will be skipped.
     Example:
         >>>print(date_items(nodelist, items))
        [(['faust://bibliography/bohnenkamp1994'], ('faust://document/faustedition/T_1_H.0',), {'notBefore': '1810-11-04', 'notAfter': '1812-12-01', 'when': '-'}), 
@@ -31,6 +32,10 @@ def date_items(nodelist, items):
     tmp_items = items
     
     for element in nodelist:
+        if skipignore:
+            if "ignore" in element.attributes and element.getAttribute("ignore") == "yes":
+                continue
+
         tmp_sources = []
         tmp_nodes = []
         tmp_dates = {}
@@ -116,7 +121,7 @@ def relation_items(nodelist, items, temppre):
         
     return tmp_items
 
-def xmlparser(path, absolute=False, temppre=True):
+def xmlparser(path, absolute=False, temppre=True, skipignore=False):
     """Parses only XML files inside a directory and returns a list with tuples which contain either relative dates or 
         absolute dates of a manuscript.
     
@@ -124,6 +129,7 @@ def xmlparser(path, absolute=False, temppre=True):
         path (str): Path to desired directory.
         absolute (bool): If True, the parser parses <date>-elements, else it parses <relation>-elements.
         temppre (bool): If True, the function only adds temp-pre child-items, else it adds temp-syn child-items.
+        skipignore (bool): If True, <date>-elements with the @ignore=yes attribute will be skipped.
     Returns:
         List with tupels which contain either relative dates or absolute dates of a manuscript.
    
@@ -134,7 +140,7 @@ def xmlparser(path, absolute=False, temppre=True):
         xml_text = minidom.parse(str(file))
         if absolute:
             parsed_elements = xml_text.getElementsByTagName("date")
-            items = date_items(parsed_elements, items)
+            items = date_items(parsed_elements, items, skipignore)
         else:
             parsed_elements = xml_text.getElementsByTagName("relation")
             items = relation_items(parsed_elements, items, temppre)
