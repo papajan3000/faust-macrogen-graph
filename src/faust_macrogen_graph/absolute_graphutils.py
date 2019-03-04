@@ -5,7 +5,7 @@
 import networkx as nx
 from collections import Counter
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def year_comparison(manuscript, existing_manuscript_source, source_name, special_researchers):
     """Checks if the year of an already existing manuscript source is greater or smaller than the year of a different source for the same 
@@ -181,7 +181,7 @@ def dates_paulus(date_items, special_researchers, notbeforedate=True):
         start_date = "-"
         
         if notbeforedate:
-            if notbefore != "-":
+            if notbefore != "-":    
                 start_date = datetime.strptime(notbefore, '%Y-%m-%d')
             elif when != "-":
                 start_date = datetime.strptime(when, '%Y-%m-%d')
@@ -196,7 +196,6 @@ def dates_paulus(date_items, special_researchers, notbeforedate=True):
             #if notAfter and when were not provieded with a date, notBefore will be taken instead
             elif notbefore != "-" and notafter == "-":
                 start_date = datetime.strptime(notbefore, '%Y-%m-%d')
-        
         
         #not adding falsely tagged date-elements (6 elements exist)
         if start_date != "-":
@@ -219,6 +218,56 @@ def dates_paulus(date_items, special_researchers, notbeforedate=True):
                     paulus_dict[manuscript] = (start_date, source_name)
             
     return paulus_dict
+
+#TODO: docstring
+def dates_smaller_period(date_items):
+    """
+    """
+    
+    sp_dict = {}
+    
+    for item in date_items:
+        source_name = item[0][0]
+        manuscript = item[1][0]
+        dates_dict = item[2]
+        
+        notbefore = dates_dict["notBefore"]
+        notafter = dates_dict["notAfter"]
+        when = dates_dict["when"]
+        
+        start_date = "-"
+        end_date = "-"
+        
+        if when != "-":
+            start_date = datetime.strptime(when, '%Y-%m-%d')
+            sp_dict[manuscript] = (start_date, source_name, 10.0)
+        elif notafter == "-" and notbefore != "-":
+            start_date = datetime.strptime(notbefore, '%Y-%m-%d')
+            sp_dict[manuscript] = (start_date, source_name)
+        elif notbefore == "-" and notafter != "-":
+            start_date = datetime.strptime(notafter, '%Y-%m-%d')
+            sp_dict[manuscript] = (start_date, source_name)
+        elif notbefore != "-" and notafter != "-":
+            start_date = datetime.strptime(notbefore, '%Y-%m-%d')
+            end_date = datetime.strptime(notafter, '%Y-%m-%d')
+            
+            period = end_date - start_date
+            period = period.days
+        
+            x = 0
+            
+            if period < 4:
+                x = 0
+            else:
+                x = int(period/4)
+                
+            start_date = start_date + timedelta(days=x)
+            end_date = end_date - timedelta(days=x)
+            
+            sp_dict[manuscript] = (start_date, source_name, 1.0, end_date)
+    
+    return sp_dict
+
 
 #TODO: docstring
 def add_edges_from_dates_list(G, dates_list):
@@ -270,6 +319,10 @@ def graph_from_dates(date_items, approach, special_researchers):
         paulus2_d = dates_paulus(date_items, special_researchers, False)
         paulus2_ds = [(k, paulus2_d[k]) for k in sorted(paulus2_d, key=paulus2_d.get, reverse=False)]
         G = add_edges_from_dates_list(G, paulus2_ds)
-    
+    elif approach == "smaller_period":
+        sp_d = dates_smaller_period(date_items)
+        sp_ds = [(k, sp_d[k]) for k in sorted(sp_d, key=sp_d.get, reverse=False)]
+        G = add_edges_from_dates_list(G, sp_ds)
+
     return G
     

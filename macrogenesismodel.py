@@ -25,7 +25,7 @@ def fas_test(paramlist, special_researchers):
     
     #{fas, edges, nodes, cycles, df}
     fas_test_dict = {}    
-    
+    2
     approach = paramlist[0]
     skipignore = paramlist[1]
     fas_algorithm = paramlist[2]
