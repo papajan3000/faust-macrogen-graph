@@ -56,17 +56,26 @@ def date_items(nodelist, items, skipignore):
         if element.getAttribute("notBefore"):
             tmp_dates["notBefore"] = element.getAttribute("notBefore")
         else:
-            tmp_dates["notBefore"] = "-"
+            #@from attributes will be treated as @notBefore attributes
+            if element.getAttribute("from"):
+                tmp_dates["notBefore"] = element.getAttribute("from")
+            else:
+                tmp_dates["notBefore"] = "-"
             
         if element.getAttribute("notAfter"):
             tmp_dates["notAfter"] = element.getAttribute("notAfter")
         else:
-            tmp_dates["notAfter"] = "-"
+            #@to attributes will be treated as @notAfter attributes
+            if element.getAttribute("to"):
+                tmp_dates["notAfter"] = element.getAttribute("to")
+            else:
+                tmp_dates["notAfter"] = "-"
         
         if element.getAttribute("when"):
             tmp_dates["when"] = element.getAttribute("when")
         else:
             tmp_dates["when"] = "-"
+            
             
         tmp_nodelist.append(tmp_sources)    
         tmp_nodelist.append(tuple(tmp_nodes))     

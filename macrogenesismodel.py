@@ -1,113 +1,149 @@
 #%%
 # -*- coding: utf-8 -*-
-from faust_macrogen_graph import parserutils, analyzeutils, eades_fas, absolute_graphutils, relative_graphutils
+from faust_macrogen_graph import parserutils, analyzeutils, absolute_graphutils, relative_graphutils, eades_fas
 from pathlib import Path
+import pandas as pd
+from collections import Counter, OrderedDict
 import networkx as nx
-import matplotlib.pyplot as plt
-
-#####
-# preparation of XML file by parsing and collecting specific elements
-#####
-
-filespath = Path('resources')
-temppre_items = parserutils.xmlparser(filespath)
-tempsyn_items = parserutils.xmlparser(filespath, False, False)
-date_items = parserutils.xmlparser(filespath, True)
 
 #%%
-#####
-# graph for tempsyn <relation>-elements
-#####
-
-tempsynG = nx.DiGraph()
-for t in tempsyn_items:
-    relative_graphutils.add_egdes_from_node_list(tempsynG, t)
-#%%
-#####
-# fas graph tempsyn <relation>-elements
-#####
-nx.is_directed_acyclic_graph(tempsynG)
+#TODO: edit docstring and whole function
+def fas_test(paramlist, special_researchers):
+    """
+    Args:
+        paramlist (list): List with the parameters 'approach', 'skipignore' and 'MFAS approach'.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.     
+    Returns:
+        
+    """
     
-tempsynG_fas = eades_fas.eades_FAS(tempsynG, True) # seven percent of the edges of tpG are in the FAS
-
-#atempysnG = acyclic tempsyn Graph
-atempsynG = tempsynG.copy()
-atempsynG.remove_edges_from(tempsynG_fas)
-nx.is_directed_acyclic_graph(atempsynG)
-
-
-#%%
-#####
-# graph for temppre <relation>-elements
-#####
-
-temppreG = nx.DiGraph()
-for t in temppre_items:
-    relative_graphutils.add_egdes_from_node_list(temppreG, t)
-
-#%%
-#####
-# fas graph for temppre <relation>-elements
-#####
-temppreG_fas = eades_fas.eades_FAS(temppreG, True) # seven percent of the edges of tpG are in the FAS
-
-#atemppreG = acyclic temppre Graph
-atemppreG = temppreG.copy()
-atemppreG.remove_edges_from(temppreG_fas)
-
-
-#%%
-#####
-# graph for <date> elements
-#####
-
-
-wissenbach_d = absolute_graphutils.dates_wissenbach(date_items)
-        # structure: (manuscript, (date, source))
-wissenbach_ds = [(k, wissenbach_d[k]) for k in sorted(wissenbach_d, key=wissenbach_d.get, reverse=False)]
-print(wissenbach_ds[1])
-#%%
-for k, v in absolute_graphutils.dates_vitt(date_items).items():
-    print(v)
+    ###########################################################################
+    ###########################################################################
+    # preparation & creation of graph
+    ###########################################################################
+    ###########################################################################
     
-#%%
-dateG = absolute_graphutils.graph_from_dates(date_items, "vitt")
-print(nx.is_directed_acyclic_graph(dateG))
-nx.draw_networkx(dateG)
+    #{fas, edges, nodes, cycles, df}
+    fas_test_dict = {}    
+    
+    approach = paramlist[0]
+    skipignore = paramlist[1]
+    fas_algorithm = paramlist[2]
+    #####
+    # preparation of XML file by parsing and collecting specific elements
+    #####
+    
+    filespath = Path('resources')
+    temppre_items = parserutils.xmlparser(filespath)
+    tempsyn_items = parserutils.xmlparser(filespath, False, False)
+    date_items = parserutils.xmlparser(filespath, True, skipignore=skipignore)
+    
+    #####
+    # graph for tempsyn <relation>-elements
+    #####
+    tempsynG = nx.DiGraph()
+    for t in tempsyn_items:
+        relative_graphutils.add_egdes_from_node_list(tempsynG, t)    
+    #####
+    # graph for temppre <relation>-elements
+    #####
+    temppreG = nx.DiGraph()
+    for t in temppre_items:
+        relative_graphutils.add_egdes_from_node_list(temppreG, t)
+        
+    #####
+    # graph for <date> elements & whole graph G
+    #####
+    
+    tmpG = nx.compose(temppreG, tempsynG)
+    datesG = absolute_graphutils.graph_from_dates(date_items, approach, special_researchers)
+    G = nx.compose(tmpG, datesG)
+    G_fas = eades_fas.eades_FAS(G, fas_algorithm)
+    
+    #####
+    # adding to the fas_test_dict
+    #####
+    fas_test_dict["fas"] = len(G_fas)
+    fas_test_dict["edges"] = len(G.edges())
+    fas_test_dict["nodes"] = len(G.nodes())
+    fas_test_dict["cycles"] = len(list(nx.simple_cycles(G)))
+    
+    ###########################################################################
+    ###########################################################################
+    # analyzation
+    ###########################################################################
+    ###########################################################################
+    
+    year_scores = analyzeutils.get_source_year(G)
+    year_df = pd.DataFrame(year_scores.items(), columns=["source", "year"])
+    year_df.set_index("source", inplace=True)
+    
+    #df with research count scores
+    research_scores = analyzeutils.get_research_score(G)
+    sorted_research_scores = {k: research_scores[k] 
+                                  for k in sorted(research_scores, key=research_scores.get, reverse=True)}
+    research_df = pd.DataFrame(sorted_research_scores.items(), columns=["source", "year_frequency"])
+    research_df.set_index("source", inplace=True)
+    
+    #df with normed research count scores
+    norm_research_scores = analyzeutils.get_norm_research_score(G, 1770, 2020)
+    sorted_norm_research_scores = {k: norm_research_scores[k]
+                                  for k in sorted(norm_research_scores, key=norm_research_scores.get, reverse=True)}
+    
+    norm_research_df = pd.DataFrame(sorted_norm_research_scores.items(), columns=["source", "norm_year_frequency"])
+    norm_research_df.set_index("source", inplace=True)
+        
+    #combinig the three dfs
+    source_df = research_df.join(norm_research_df)
+    
+    
+    #adding df with publication year of the source to the source_df
+    year_scores = analyzeutils.get_source_year(G)
+    year_df = pd.DataFrame(year_scores.items(), columns=["source", "pub_year"])
+    year_df.set_index("source", inplace=True)
+    
+    source_df = source_df.join(year_df)
+    
+    
+    
+    fas_source_counter = Counter()
+    for edge in G_fas:
+        if G.has_edge(edge[0], edge[1]):
+            edge_data = G.get_edge_data(edge[0], edge[1])
+            key = edge_data["source"]
+            if fas_source_counter[key]:
+                fas_source_counter[key] += 1
+            else:
+                fas_source_counter[key] = 1
+    
+                
+    fasfrequency_df = pd.DataFrame.from_dict(OrderedDict(fas_source_counter.most_common()), 
+                                             orient="index").reset_index()
+    fasfrequency_df = fasfrequency_df.rename(columns={"index":"source", 0:"fas_frequency"})
+    fasfrequency_df.set_index("source", inplace=True)
+    
+    df = source_df.join(fasfrequency_df)
+    df = df.dropna()
+    
+    percent_fas = (df["fas_frequency"] / df["year_frequency"]) * 100
+    norm_percent_fas = (df["fas_frequency"] / df["norm_year_frequency"]) * 100
+    percentfas_df = pd.concat([percent_fas, norm_percent_fas], axis=1, sort=True)
+    percentfas_df = percentfas_df.rename(columns={0:"percent_fas", 1:"norm_percent_fas"})
+    percentfas_df.sort_values(by="percent_fas", ascending=False)
+    df = df.join(percentfas_df, on="source")
+    
+    
+    fas_test_dict["source_df"] = source_df
+    fas_test_dict["fasfrequency_df"] = fasfrequency_df
+    fas_test_dict["percentfas_df"] = percentfas_df
+    
+    #fas_test_dict["df"] = df
 
 
+    
+    
+    return fas_test_dict
 
-#%%
-#####
-# norm the researchers scores of the researchers of the new temppre and tempsyn graphs
-#####
-syn_nws = analyzeutils.get_norm_research_score(atempsynG)
-pre_nws = analyzeutils.get_norm_research_score(atemppreG)
-
-print("syn-nws: " + str(syn_nws))
-print("\n")
-print("pre-nws: " + str(pre_nws))
-
-####
-# HIER WEITER
-# keine doppelten (also keine (v,u) bei (u,v))
-#
-# Aufgabe a, b, c machen?!
-#
-#%%
-a = analyzeutils.get_norm_research_score(dateG)
-print(a)
-
-#%%
-
-fas_relation_overlap = []
-
-for edges in tempsynG_fas:
-    if edges in temppreG_fas:
-        fas_relation_overlap.append(edges)
-
-#should be empty       
-print(fas_relation_overlap)
 
 
 

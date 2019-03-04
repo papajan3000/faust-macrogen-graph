@@ -4,6 +4,21 @@ import networkx as nx
 from collections import Counter
 import re
 from datetime import datetime
+import pandas as pd
+
+#TODO: docstring
+def dataframe_from_column(df, metacol, extractcol, doublecolumn=True):
+    """
+    """
+    d = {}
+    for idx, dataframe in enumerate(df[metacol]):
+        source = list(df.index)
+        extractdf = dict(dataframe[extractcol])
+        d[source[idx]] = extractdf
+
+    return pd.DataFrame(d)
+
+
 
 def special_research_generator(item_list):
     """Generate a list with researchers out of all researchers whose name doesn't include a publication year.
@@ -28,6 +43,52 @@ def special_research_generator(item_list):
             special_researchers.append(r)
 
     return special_researchers
+
+def get_source_year(G):
+    """Returns dictionary with the edge sources of a graph as keys and their publication year as values, extracted from a string
+        or a special dictionary.
+    
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+    Returns:
+        Dictionary with the sources as keys and their publication year as values.
+    """
+    
+    special_researchers = {'faust://bibliography/gsa-datenbank' : 1950, 
+                         'faust://self' : 2000, 
+                         'faust://bibliography/inventare_2_2': 2011, 
+                         'faust://bibliography/aa_duw_2': 1974,
+                         'faust://print/faustedition/J.2': 1887, 
+                         'faust://bibliography/quz_1': 1966, 
+                         'faust://bibliography/quz_2': 1982, 
+                         'faust://bibliography/quz_3': 1986,
+                         'faust://bibliography/quz_4': 1984,
+                         'faust://bibliography/wa_I_13_2': 1901, 
+                         'faust://bibliography/wa_I_14': 1887, 
+                         'faust://bibliography/wa_I_15_2': 1888, 
+                         'faust://bibliography/wa_I_53': 1914,
+                         'faust://bibliography/wa_IV_13': 1893}
+    
+    source_year = {}
+    
+    for edge in G.edges():
+        edge_data = G.get_edge_data(edge[0], edge[1])
+        source = edge_data["source"]
+        if source in source_year:
+            pass
+        else:
+            if source in special_researchers:
+                year = special_researchers[source]
+            else:
+                year = re.match(r".*([1-3][0-9]{3})", str(source))
+                if year is not None:
+                    year = year.group(1)
+                else:
+                    year = 1000
+            
+            source_year[source] = int(year)
+        
+    return source_year
 
 
 def get_research_score(G):
