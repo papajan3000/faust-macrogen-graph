@@ -25,10 +25,10 @@ def fas_test(paramlist, special_researchers):
     
     #{fas, edges, nodes, cycles, df}
     fas_test_dict = {}    
-    2
     approach = paramlist[0]
     skipignore = paramlist[1]
     fas_algorithm = paramlist[2]
+
     #####
     # preparation of XML file by parsing and collecting specific elements
     #####
@@ -50,13 +50,17 @@ def fas_test(paramlist, special_researchers):
     temppreG = nx.DiGraph()
     for t in temppre_items:
         relative_graphutils.add_egdes_from_node_list(temppreG, t)
-        
+    
     #####
     # graph for <date> elements & whole graph G
     #####
     
     tmpG = nx.compose(temppreG, tempsynG)
-    datesG = absolute_graphutils.graph_from_dates(date_items, approach, special_researchers)
+    if len(paramlist) >= 4:
+        datesG = absolute_graphutils.graph_from_dates(date_items, approach, special_researchers, paramlist[3])
+    else:
+        datesG = absolute_graphutils.graph_from_dates(date_items, approach, special_researchers)
+    
     G = nx.compose(tmpG, datesG)
     G_fas = eades_fas.eades_FAS(G, fas_algorithm)
     
@@ -66,6 +70,7 @@ def fas_test(paramlist, special_researchers):
     fas_test_dict["fas"] = len(G_fas)
     fas_test_dict["edges"] = len(G.edges())
     fas_test_dict["nodes"] = len(G.nodes())
+    fas_test_dict["nodeslist"] = list(G.nodes())
     fas_test_dict["cycles"] = len(list(nx.simple_cycles(G)))
     
     ###########################################################################
@@ -73,8 +78,7 @@ def fas_test(paramlist, special_researchers):
     # analyzation
     ###########################################################################
     ###########################################################################
-    
-    year_scores = analyzeutils.get_source_year(G)
+    year_scores = analyzeutils.get_source_year(G, special_researchers)
     year_df = pd.DataFrame(year_scores.items(), columns=["source", "year"])
     year_df.set_index("source", inplace=True)
     
@@ -86,7 +90,7 @@ def fas_test(paramlist, special_researchers):
     research_df.set_index("source", inplace=True)
     
     #df with normed research count scores
-    norm_research_scores = analyzeutils.get_norm_research_score(G, 1770, 2020)
+    norm_research_scores = analyzeutils.get_norm_research_score(G, special_researchers, 1770, 2017)
     sorted_norm_research_scores = {k: norm_research_scores[k]
                                   for k in sorted(norm_research_scores, key=norm_research_scores.get, reverse=True)}
     
@@ -96,9 +100,8 @@ def fas_test(paramlist, special_researchers):
     #combinig the three dfs
     source_df = research_df.join(norm_research_df)
     
-    
     #adding df with publication year of the source to the source_df
-    year_scores = analyzeutils.get_source_year(G)
+    year_scores = analyzeutils.get_source_year(G, special_researchers)
     year_df = pd.DataFrame(year_scores.items(), columns=["source", "pub_year"])
     year_df.set_index("source", inplace=True)
     
@@ -143,9 +146,3 @@ def fas_test(paramlist, special_researchers):
     
     
     return fas_test_dict
-
-
-
-
-
-
