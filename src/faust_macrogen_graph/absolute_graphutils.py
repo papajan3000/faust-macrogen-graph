@@ -220,8 +220,11 @@ def dates_paulus(date_items, special_researchers, notbeforedate=True):
     return paulus_dict
 
 #TODO: docstring
-def dates_smaller_period(date_items):
+def dates_shorter_period(date_items, factor):
     """
+    Args:
+        date_items (list): List of tupels with the following structure: ([source], (manuscript), {notBefore: year, notAfter: year, when: year}).
+        factor (int): Integer which will be divided with the period between two dates.
     """
     
     sp_dict = {}
@@ -256,10 +259,10 @@ def dates_smaller_period(date_items):
         
             x = 0
             
-            if period < 4:
+            if period < factor:
                 x = 0
             else:
-                x = int(period/4)
+                x = int(period/factor)
                 
             start_date = start_date + timedelta(days=x)
             end_date = end_date - timedelta(days=x)
@@ -267,6 +270,48 @@ def dates_smaller_period(date_items):
             sp_dict[manuscript] = (start_date, source_name, 1.0, end_date)
     
     return sp_dict
+
+#TODO: docstring
+def dates_longer_period(date_items, factor):
+    """
+    Args:
+        date_items (list): List of tupels with the following structure: ([source], (manuscript), {notBefore: year, notAfter: year, when: year}).
+        factor (int): Integer which will be divided with the period between two dates.
+    """
+    
+    lp_dict = {}
+    
+    for item in date_items:
+        source_name = item[0][0]
+        manuscript = item[1][0]
+        dates_dict = item[2]
+        
+        notbefore = dates_dict["notBefore"]
+        notafter = dates_dict["notAfter"]
+        when = dates_dict["when"]
+        
+        start_date = "-"
+        end_date = "-"
+        
+        if when != "-":
+            start_date = datetime.strptime(when, '%Y-%m-%d')
+            lp_dict[manuscript] = (start_date, source_name, 10.0)
+        elif notafter == "-" and notbefore != "-":
+            start_date = datetime.strptime(notbefore, '%Y-%m-%d')
+            lp_dict[manuscript] = (start_date, source_name)
+        elif notbefore == "-" and notafter != "-":
+            start_date = datetime.strptime(notafter, '%Y-%m-%d')
+            lp_dict[manuscript] = (start_date, source_name)
+        elif notbefore != "-" and notafter != "-":
+            start_date = datetime.strptime(notbefore, '%Y-%m-%d')
+            end_date = datetime.strptime(notafter, '%Y-%m-%d')
+            
+            start_date = start_date - timedelta(days=factor)
+            end_date = end_date + timedelta(days=factor)
+            
+            lp_dict[manuscript] = (start_date, source_name, 1.0, end_date)
+    
+    return lp_dict
 
 
 #TODO: docstring
@@ -290,7 +335,7 @@ def add_edges_from_dates_list(G, dates_list):
             nG.add_edge(str(date_item), manuscript, weight=1.0, source=source_name)
     return nG
 
-def graph_from_dates(date_items, approach, special_researchers):
+def graph_from_dates(date_items, approach, special_researchers, factor=4):
     """Generates a graph out of date_items by connecting nodes through edges based on one of four different systems (= approaches).
     
     Args:
@@ -298,6 +343,7 @@ def graph_from_dates(date_items, approach, special_researchers):
                             and the third items is a dictionary with the keys "notBefore", "notAfter" and "when".
         approach (string): One of the following four approaches: wissenbach, vitt, paulus-1, paulus-2.
         special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
+        factor (int): Integer which will be divided with the period between two dates.
     Returns:
         A Directed Graph Object of networkx with edges and nodes based on one of the four approaches.
     """
@@ -319,10 +365,14 @@ def graph_from_dates(date_items, approach, special_researchers):
         paulus2_d = dates_paulus(date_items, special_researchers, False)
         paulus2_ds = [(k, paulus2_d[k]) for k in sorted(paulus2_d, key=paulus2_d.get, reverse=False)]
         G = add_edges_from_dates_list(G, paulus2_ds)
-    elif approach == "smaller_period":
-        sp_d = dates_smaller_period(date_items)
+    elif approach == "shorter_period":
+        sp_d = dates_shorter_period(date_items, factor)
         sp_ds = [(k, sp_d[k]) for k in sorted(sp_d, key=sp_d.get, reverse=False)]
         G = add_edges_from_dates_list(G, sp_ds)
+    elif approach == "longer_period":
+        lp_d = dates_longer_period(date_items, factor)
+        lp_ds = [(k, lp_d[k]) for k in sorted(lp_d, key=lp_d.get, reverse=False)]
+        G = add_edges_from_dates_list(G, lp_ds)
 
     return G
     

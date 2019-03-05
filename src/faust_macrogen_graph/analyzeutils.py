@@ -21,7 +21,7 @@ def dataframe_from_column(df, metacol, extractcol, doublecolumn=True):
 
 
 def special_research_generator(item_list):
-    """Generate a list with researchers out of all researchers whose name doesn't include a publication year.
+    """Generates a list with researchers out of all researchers whose name doesn't include a publication year.
     
     Args:
         item_list (list): List with date-, temppre- and tempsyn_items.
@@ -44,31 +44,16 @@ def special_research_generator(item_list):
 
     return special_researchers
 
-def get_source_year(G):
+def get_source_year(G, special_researchers):
     """Returns dictionary with the edge sources of a graph as keys and their publication year as values, extracted from a string
         or a special dictionary.
     
     Args:
         G (DiGraph): DiGraph-Object of networkx.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values. 
     Returns:
         Dictionary with the sources as keys and their publication year as values.
-    """
-    
-    special_researchers = {'faust://bibliography/gsa-datenbank' : 1950, 
-                         'faust://self' : 2000, 
-                         'faust://bibliography/inventare_2_2': 2011, 
-                         'faust://bibliography/aa_duw_2': 1974,
-                         'faust://print/faustedition/J.2': 1887, 
-                         'faust://bibliography/quz_1': 1966, 
-                         'faust://bibliography/quz_2': 1982, 
-                         'faust://bibliography/quz_3': 1986,
-                         'faust://bibliography/quz_4': 1984,
-                         'faust://bibliography/wa_I_13_2': 1901, 
-                         'faust://bibliography/wa_I_14': 1887, 
-                         'faust://bibliography/wa_I_15_2': 1888, 
-                         'faust://bibliography/wa_I_53': 1914,
-                         'faust://bibliography/wa_IV_13': 1893}
-    
+    """    
     source_year = {}
     
     for edge in G.edges():
@@ -108,7 +93,7 @@ def get_research_score(G):
 
 
 
-def get_norm_research_score(G, min_range=1770, max_range=2017):
+def get_norm_research_score(G, special_researchers, min_range=1770, max_range=2017):
     """Normalize the score of a given Counter of researchers and their score. The score is computed as following: 
             Number of the researchers work mentioned in the macrogenesis * normalized year of publication of researchers work about Faust
             e.g.: Bohnenkamp 1994 --> 94 * ((1994 - 1770) / (2017 - 1770)) = 94 * 0.9068825910931174 = 85.24696356275304
@@ -117,6 +102,7 @@ def get_norm_research_score(G, min_range=1770, max_range=2017):
         
     Args:
         G (DiGraph): DiGraph-Object of networkx.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values. 
         min_range (int): Lower border of the normalization function.
         max_range (int): Upper border of the normalization function.
     Returns:
@@ -124,20 +110,6 @@ def get_norm_research_score(G, min_range=1770, max_range=2017):
     """
     research_score = dict(get_research_score(G))
     norm_research_score = {}
-    special_researchers = {'faust://bibliography/gsa-datenbank' : 1950, 
-                         'faust://self' : 2000, 
-                         'faust://bibliography/inventare_2_2': 2011, 
-                         'faust://bibliography/aa_duw_2': 1974,
-                         'faust://print/faustedition/J.2': 1887, 
-                         'faust://bibliography/quz_1': 1966, 
-                         'faust://bibliography/quz_2': 1982, 
-                         'faust://bibliography/quz_3': 1986,
-                         'faust://bibliography/quz_4': 1984,
-                         'faust://bibliography/wa_I_13_2': 1901, 
-                         'faust://bibliography/wa_I_14': 1887, 
-                         'faust://bibliography/wa_I_15_2': 1888, 
-                         'faust://bibliography/wa_I_53': 1914,
-                         'faust://bibliography/wa_IV_13': 1893}
     
 
     for key, value in research_score.items():
