@@ -1,6 +1,6 @@
 #%%
 # -*- coding: utf-8 -*-
-from faust_macrogen_graph import parserutils, analyzeutils, absolute_graphutils, relative_graphutils, eades_fas
+from faust_macrogen_graph import parserutils, analyzeutils, graphutils, eades_fas
 from pathlib import Path
 import pandas as pd
 from collections import Counter, OrderedDict
@@ -43,13 +43,13 @@ def fas_test(paramlist, special_researchers):
     #####
     tempsynG = nx.DiGraph()
     for t in tempsyn_items:
-        relative_graphutils.add_egdes_from_node_list(tempsynG, t)    
+        graphutils.add_egdes_from_node_list(tempsynG, t)    
     #####
     # graph for temppre <relation>-elements
     #####
     temppreG = nx.DiGraph()
     for t in temppre_items:
-        relative_graphutils.add_egdes_from_node_list(temppreG, t)
+        graphutils.add_egdes_from_node_list(temppreG, t)
     
     #####
     # graph for <date> elements & whole graph G
@@ -57,9 +57,9 @@ def fas_test(paramlist, special_researchers):
     
     tmpG = nx.compose(temppreG, tempsynG)
     if len(paramlist) >= 4:
-        datesG = absolute_graphutils.graph_from_dates(date_items, approach, special_researchers, paramlist[3])
+        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers, paramlist[3])
     else:
-        datesG = absolute_graphutils.graph_from_dates(date_items, approach, special_researchers)
+        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers)
     
     G = nx.compose(tmpG, datesG)
     G_fas = eades_fas.eades_FAS(G, fas_algorithm)
