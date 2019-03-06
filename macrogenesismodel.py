@@ -140,9 +140,5 @@ def fas_test(paramlist, special_researchers):
     fas_test_dict["fasfrequency_df"] = fasfrequency_df
     fas_test_dict["percentfas_df"] = percentfas_df
     
-    #fas_test_dict["df"] = df
-
-
-    
     
     return fas_test_dict

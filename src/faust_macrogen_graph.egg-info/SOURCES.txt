@@ -2,12 +2,12 @@ README.md
 setup.cfg
 setup.py
 src/faust_macrogen_graph/__init__.py
-src/faust_macrogen_graph/absolute_graphutils.py
 src/faust_macrogen_graph/analyzeutils.py
+src/faust_macrogen_graph/approachesutils.py
 src/faust_macrogen_graph/baharev_fas.py
 src/faust_macrogen_graph/eades_fas.py
+src/faust_macrogen_graph/graphutils.py
 src/faust_macrogen_graph/parserutils.py
-src/faust_macrogen_graph/relative_graphutils.py
 src/faust_macrogen_graph.egg-info/PKG-INFO
 src/faust_macrogen_graph.egg-info/SOURCES.txt
 src/faust_macrogen_graph.egg-info/dependency_links.txt

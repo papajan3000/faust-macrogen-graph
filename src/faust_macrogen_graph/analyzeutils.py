@@ -1,14 +1,17 @@
-#%%
-#TODO: docstrings
-import networkx as nx
 from collections import Counter
 import re
-from datetime import datetime
 import pandas as pd
 
-#TODO: docstring
-def dataframe_from_column(df, metacol, extractcol, doublecolumn=True):
-    """
+
+def dataframe_from_column(df, metacol, extractcol):
+    """Extract DataFrames of specific columns of another DataFrame and generate a new DataFrame.
+    
+    Args:
+        df (DataFrame): The DataFrame whereof the DataFrames will be extracted.
+        metacol (string): Column name of df, where the DataFrames are stored.
+        extractcol (string): Column name of the extracted DataFrame.
+    Returns:
+        Extracted DataFramefrom another DataFrame.
     """
     d = {}
     for idx, dataframe in enumerate(df[metacol]):
@@ -18,31 +21,6 @@ def dataframe_from_column(df, metacol, extractcol, doublecolumn=True):
 
     return pd.DataFrame(d)
 
-
-
-def special_research_generator(item_list):
-    """Generates a list with researchers out of all researchers whose name doesn't include a publication year.
-    
-    Args:
-        item_list (list): List with date-, temppre- and tempsyn_items.
-    Returns:
-        List with special researchers where the publication year can't be extracted from the name.
-    """
-    researchers = []
-    for items in item_list:
-        for item in items:
-            research_list = item[0]
-            for research in research_list:
-                if research not in researchers:
-                    researchers.append(research)
-    
-    special_researchers = []
-    for r in researchers:
-        match = re.match(r".*([1-3][0-9]{3})", r)
-        if match == None:
-            special_researchers.append(r)
-
-    return special_researchers
 
 def get_source_year(G, special_researchers):
     """Returns dictionary with the edge sources of a graph as keys and their publication year as values, extracted from a string
@@ -92,7 +70,6 @@ def get_research_score(G):
     return research_score
 
 
-
 def get_norm_research_score(G, special_researchers, min_range=1770, max_range=2017):
     """Normalize the score of a given Counter of researchers and their score. The score is computed as following: 
             Number of the researchers work mentioned in the macrogenesis * normalized year of publication of researchers work about Faust
@@ -125,3 +102,27 @@ def get_norm_research_score(G, special_researchers, min_range=1770, max_range=20
         normalized_year = (int(year) - min_range) / (max_range - min_range) #range(1700, 2020), normalized to be between 0 and 1
         norm_research_score[key] = value * normalized_year
     return norm_research_score
+
+def special_research_generator(item_list):
+    """Generates a list with researchers out of all researchers whose name doesn't include a publication year.
+    
+    Args:
+        item_list (list): List with date-, temppre- and tempsyn_items.
+    Returns:
+        List with special researchers where the publication year can't be extracted from the name.
+    """
+    researchers = []
+    for items in item_list:
+        for item in items:
+            research_list = item[0]
+            for research in research_list:
+                if research not in researchers:
+                    researchers.append(research)
+    
+    special_researchers = []
+    for r in researchers:
+        match = re.match(r".*([1-3][0-9]{3})", r)
+        if match == None:
+            special_researchers.append(r)
+
+    return special_researchers

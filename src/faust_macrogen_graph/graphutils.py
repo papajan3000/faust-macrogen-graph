@@ -1,13 +1,5 @@
-#%%
-#TODO: docstrings for all überprüfen
-#TODO: ^
-#TODO: |
 import networkx as nx
-from collections import Counter
-import re
-from datetime import datetime, timedelta
 from faust_macrogen_graph import approachesutils
-
 
 #####
 # functions for the relation elements
@@ -18,7 +10,7 @@ def add_egdes_from_node_list(G, nodelist):
     
     Args:
         G (DiGraph): DiGraph-Object of networkx.
-        nodelist (list): list with 2-tuples, where the first item is a list of sources and the second item is a tuple of nodes in a given order.
+        nodelist (list): List with 2-tuples, where the first item is a list of sources and the second item is a tuple of nodes in a given order.
     Returns:
         Enhanced input-graph with the nodes and edges of the nodelist and the source as edge attribute.
     """
@@ -44,9 +36,16 @@ def add_egdes_from_node_list(G, nodelist):
 # functions for the date elements
 ####
     
-#TODO: docstring
 def add_edges_from_dates_list(G, dates_list):
-    """
+    """Generate a directed Graph with manuscript and dates as nodes based on a list of dates and manuscripts.    
+    
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        dates_list (list, tuple): List or tuple of manuscripts sorted by dates with the structure: 
+                                    [manuscript, (date, source, "weight", "end_date")]. The elements 
+                                    in quotation marks are optional.
+    Returns:
+        DiGraph-Object of networkx with manuscript and dates as nodes and sources as edge-attributes.
     """
     nG = G
     for t in dates_list:
@@ -55,9 +54,10 @@ def add_edges_from_dates_list(G, dates_list):
         date_item = t[1][0]
         source_name = t[1][1]
 
-        #in case of special case of Paulus approaches where @when attribute gets a higher weight
+        #when an approach gives a different weight to the @when-attribute
         if len(t[1]) == 3:
             nG.add_edge(str(date_item), manuscript, weight=t[1][2], source=source_name)
+        #when an approach has two date-nodes
         elif len(t[1]) == 4:
             nG.add_edge(str(date_item), manuscript, weight=1.0, source=source_name)
             nG.add_edge(manuscript, str(t[1][3]), weight=1.0, source=source_name)
@@ -66,16 +66,16 @@ def add_edges_from_dates_list(G, dates_list):
     return nG
 
 def graph_from_dates(date_items, approach, special_researchers, factor=4):
-    """Generates a graph out of date_items by connecting nodes through edges based on one of four different systems (= approaches).
+    """Generates a graph out of date_items by connecting nodes through edges based on one of six different systems (= approaches).
     
     Args:
         date_items (list): 3-tuple, where the first item is a list of sources, the second item a tuple of nodes in a given order 
                             and the third items is a dictionary with the keys "notBefore", "notAfter" and "when".
-        approach (string): One of the following four approaches: wissenbach, vitt, paulus-1, paulus-2.
+        approach (string): One of the following six approaches: wissenbach, vitt, paulus-1, paulus-2, shorter_period, longer_period.
         special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
-        factor (int): Integer which will be divided with the period between two dates.
+        factor (int): Integer which will be divided with the period between two dates or added/subtracted from a date.
     Returns:
-        A Directed Graph Object of networkx with edges and nodes based on one of the four approaches.
+        A Directed Graph Object of networkx with edges and nodes based on one of the six approaches.
     """
     G = nx.DiGraph()
     
