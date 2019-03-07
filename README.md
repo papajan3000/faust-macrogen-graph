@@ -1,16 +1,26 @@
 # faust-macrogen-graph
-Creation of a graph which represents an absolute order of the creation date of the manuscripts based on the macrogenesis of the digital <b>Faust-Edition</b> (http://www.faustedition.net/).  
-To learn more about the problems of an absolute manuscript order see: http://faustedition.net/intro_macrogenesis
+Creation of a graph which represents an absolute order of the creation date of the manuscripts based on the macrogenesis of the digital <b>Faust-Edition</b> (http://www.faustedition.net/). To learn more about the problems of an absolute manuscript order see: http://faustedition.net/intro_macrogenesis
 
 ## 1. The issue of manuscript macrogenesis
-### 1.1 The ... issue
+### 1.1 The research issue
 The digital <b>Faustedition</b> delivers manuscript of the novels <b>Faust</b> and <b>Faust II</b>. These manuscript hold the problem that they are undated. It is furthermore possible that more than one inscriptions exist for a manuscript. The research tried and tries to date the making of the manuscripts but most of the dates cannot be clearly evidenced and some creation dates of the manuscripts contradict each other. It is the goal for the editors and authors of the <b>Faustedition</b> to obtain an absolute order of the manuscripts. 
 
 ### 1.2 The technical issue
-To achieve this goal, the makers of the program model for the <b>Faustedition</b> created a graph network which should ideally represent the manuscript in a definite order. The contradictions of the research dates lead to appearance of <b>cycles</b> whereby a definite order is not possible. The removal of cycles within a graph is one of Karps 21 NP-complete problems (see: https://en.wikipedia.org/wiki/Karp%27s_21_NP-complete_problems) which means there is no efficient solution for the problem. The problem, which is called <b>Minimum Feedback Arc Set</b> (MFAS) and tries to induce a minimal <b>Feedback Arc Set</b> (FAS), is a field of research within the computer science and there are some attempts who found a partial solution for the problem. 
-EADES, BAHAREV
+To achieve this goal, the makers of the program model for the <b>Faustedition</b> created a graph network which should ideally represent the manuscript in a definite order. The contradictions of the research dates lead to appearance of <b>cycles</b> whereby a definite order is not possible. The removal of cycles within a graph is one of Karps 21 NP-complete problems (see: https://en.wikipedia.org/wiki/Karp%27s_21_NP-complete_problems) which means there is no efficient solution for the problem. The problem, which is called <b>Minimum Feedback Arc Set</b> (MFAS) and tries to induce a minimal <b>Feedback Arc Set</b> (FAS), is a field of research within the computer science and there are some attempts who found a partial solution for the problem. An effiecent yet simple solution is given by Peter <b>Eades</b> (see: Eades, Peter / Lin, Xuemin / Smyth, W. F., "A Fast and Effective Heuristic for the Feedback Arc Set Problem," in: Information Processing Letters (1993), Vol. 47(6), pp. 319-323).
 
 ## 2. The challenge of this project 
+This project will deliver an implementation of Eades MFAS-algorithm and will apply it to the graph that represents the dating elements of the macrogenesis and is also created in this project. This project will follow the content of these three following three questions:
+
+1. How can we integrate the absolute datings? How does the FAS look like with and without absolute datings?
+2. Can a more detailed analysis of the number of edges and the number of contradictions be helpful to decide which edges of which source should be removed?
+3. Can erroneously removed edges be re-added without sacrificing performance? How can this be done and how many edges can be re-added?
+
+The answers to this question and further and more detailed information to the approach of the creation of a reasonable and acylic graph will be explained in the jupyter notebook ??? TODO.
+
+## 3. The project structure
+### 
+
+  
 
 ## ?. xml file structure
 ### ?.1 date
