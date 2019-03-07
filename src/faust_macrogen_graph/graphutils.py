@@ -5,12 +5,13 @@ from faust_macrogen_graph import approachesutils
 # functions for the relation elements
 #####
 
-def add_egdes_from_node_list(G, nodelist):
+def add_egdes_from_node_list(G, nodelist, temppre=True):
     """Add an edge from every node of a list of nodes to the next node in the list with the source as edge attribute.
     
     Args:
         G (DiGraph): DiGraph-Object of networkx.
         nodelist (list): List with 2-tuples, where the first item is a list of sources and the second item is a tuple of nodes in a given order.
+        temppre (bool): If True, the edges get the weight=1.0, if False, they get the weight=5.0.
     Returns:
         Enhanced input-graph with the nodes and edges of the nodelist and the source as edge attribute.
     """
@@ -28,7 +29,11 @@ def add_egdes_from_node_list(G, nodelist):
         if current_node == next_node:
             pass
         else:
-            nG.add_edge(current_node, next_node, weight=1.0, source=source_name)
+            if temppre:
+                nG.add_edge(current_node, next_node, weight=1.0, source=source_name)
+            else:
+                #tempsyn elements get another weight
+                nG.add_edge(current_node, next_node, weight=5.0, source=source_name)
     return nG
 
 
@@ -105,3 +110,82 @@ def graph_from_dates(date_items, approach, special_researchers, factor=4):
         G = add_edges_from_dates_list(G, lp_ds)
 
     return G
+
+#####
+# functions for whole graph
+#####
+    
+def remove_edge_by_source(G, source):
+    """Removes edges of Directed Graph on the basis of the input source.
+    
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        source (string): Source name as string.
+    Returns:
+        G without the edges with the input source attribute.
+    """
+    
+    nG = G.copy()
+    removed_edges = []
+    sourcenames = nx.get_edge_attributes(nG, "source")
+    for edge in nG.edges():
+        try:
+            if sourcenames[(edge[0], edge[1])] == source:
+                removed_edges.append((edge[0], edge[1]))
+        except:
+            pass
+        
+    for edge in removed_edges:
+         nG.remove_edge(edge[0], edge[1])
+        
+    return nG
+
+#TODO: docstring
+def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=False):
+    """
+        Args:
+            G (DiGraph): Cyclic DiGraph-Object of networkx.
+            aG (DiGraph): Acyclic DiGraph-Object of networkx.
+            fas (set): Set of feedback edges.
+            critical_sources (list): List with sources as strings.
+            readded_edgelist (bool): If True, the function returns a list of the readded edges.
+    """
+    
+    aG = aG.copy()
+    
+    readded_edges = []
+    
+    for sources in critical_sources:
+        sourcenames = nx.get_edge_attributes(G, "source")
+        for edge in G.edges():
+            u = edge[0]
+            v = edge[1]
+            if sourcenames[(u,v)] == sources:
+                for fasedge in fas:
+                    if u == fasedge[0] and v == fasedge[1]:
+
+                        aG.add_edge(u,v, weight=fasedge[2], source=sources)
+                        if nx.is_directed_acyclic_graph(aG) == True:
+                            readded_edges.append((u, v, fasedge[2], sources))
+                            pass
+                        else:
+                            aG.remove_edge(u,v)
+    if readded_edgelist:                       
+        return aG, readded_edges
+    else:
+        return aG
+
+            
+            
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

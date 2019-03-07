@@ -1,6 +1,91 @@
 from collections import Counter
 import re
 import pandas as pd
+from faust_macrogen_graph import graphutils, eades_fas, parserutils
+from pathlib import Path
+from collections import OrderedDict
+import networkx as nx
+
+#TODO: docstring
+def compare_approaches(approaches, special_researchers, temppre=False):
+    """
+    Args:
+        approaches (list): List with the approaches names as strings.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values. 
+        temppre (bool): If True, the graph for the approaches will be computed by the combination of 
+                        the temppre- and the dates-graph, if False, only the dates-graph.
+    Return:
+        DataFrame
+    """
+
+    approaches_graphs = {}
+    approaches_fas =  {}
+    
+    
+    filespath = Path('resources')
+    date_items = parserutils.xmlparser(filespath, True, skipignore=False)
+    
+    for approach in approaches:
+        
+        
+        if temppre:
+            temppre_items = parserutils.xmlparser(filespath)
+            temppreG = nx.DiGraph()
+            for t in temppre_items:
+                graphutils.add_egdes_from_node_list(temppreG, t)
+                
+            datesG = graphutils.graph_from_dates(date_items, approach, special_researchers)
+            G = nx.compose(temppreG, datesG)
+            
+        else:
+            G = graphutils.graph_from_dates(date_items, approach, special_researchers)
+        
+        approaches_graphs[approach] = G
+        G_fas = eades_fas.eades_FAS(G, True)
+        #adatesG = acyclic dates graph
+        aG = G.copy()
+        aG.remove_edges_from(G_fas)
+    
+        approaches_fas[approach] = G_fas
+    
+    graphs_approaches = {}
+    columns = ["n nodes", "n edges", "n cycles", "n feedback edges"]
+    
+    for k, v in approaches_graphs.items():
+        graphs_approaches[k] = [len(v.nodes()), len(v.edges()), len(list(nx.simple_cycles(v))), len(approaches_fas[k])]
+    
+    approach_df = pd.DataFrame(graphs_approaches)
+    approach_df = approach_df.T
+    approach_df.columns = columns
+    
+    return approach_df
+
+#TODO: docstring
+def gen_frequencyfas(G):
+    """
+    Returns:
+        DataFrame
+    """
+    G_fas = eades_fas.eades_FAS(G, True)
+    
+    #frequency of the researcher as manuscript source
+    fas_source_counter = Counter()
+    for edge in G_fas:
+        if G.has_edge(edge[0], edge[1]):
+            edge_data = G.get_edge_data(edge[0], edge[1])
+            key = edge_data["source"]
+            if fas_source_counter[key]:
+                fas_source_counter[key] += 1
+            else:
+                fas_source_counter[key] = 1
+    
+                
+    fasfrequency_df = pd.DataFrame.from_dict(OrderedDict(fas_source_counter.most_common()), 
+                                             orient="index").reset_index()
+    fasfrequency_df = fasfrequency_df.rename(columns={"index":"source", 0: "fas_frequency"})
+    fasfrequency_df.set_index("source", inplace=True)
+    
+    return fasfrequency_df
 
 
 def dataframe_from_column(df, metacol, extractcol):
@@ -102,6 +187,38 @@ def get_norm_research_score(G, special_researchers, min_range=1770, max_range=20
         normalized_year = (int(year) - min_range) / (max_range - min_range) #range(1700, 2020), normalized to be between 0 and 1
         norm_research_score[key] = value * normalized_year
     return norm_research_score
+
+#TODO: docstring
+def minimize_source_removal(G, remaining_fas_size=0):
+    """
+    Return:
+        DataFrame
+    """
+    
+    fasfrequency_df = gen_frequencyfas(G)
+    sourcelist = list(fasfrequency_df.index)
+    df = pd.DataFrame(0, index=sourcelist, columns=sourcelist)
+    
+    for source in sourcelist:
+        
+        nG = graphutils.remove_edge_by_source(G.copy(), source)
+        nG_fas = eades_fas.eades_FAS(nG, True)
+        df[source][source] = 1
+        
+        if len(nG_fas) > remaining_fas_size:
+            withoutsource = [e for i,e in enumerate(sourcelist) if e != source]
+            
+            for element in withoutsource:
+                nG = graphutils.remove_edge_by_source(nG, element)
+                nlongerG_fas = eades_fas.eades_FAS(nG, True)
+                df[element][source] = 1
+                
+                if len(nlongerG_fas) <= remaining_fas_size:
+                    break
+    
+    df.index.name = "source"
+    return df
+
 
 def special_research_generator(item_list):
     """Generates a list with researchers out of all researchers whose name doesn't include a publication year.
