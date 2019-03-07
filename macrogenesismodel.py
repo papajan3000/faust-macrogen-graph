@@ -1,18 +1,69 @@
 #%%
-# -*- coding: utf-8 -*-
 from faust_macrogen_graph import parserutils, analyzeutils, graphutils, eades_fas
 from pathlib import Path
 import pandas as pd
 from collections import Counter, OrderedDict
 import networkx as nx
 
-#%%
+#TODO: docstring
+#TODO: überarbeiten
+def gengraph(paramlist, special_researchers, tempsyn=False):
+    """
+    
+    Args:
+        paramlist (list): List with the parameters 'approach', 'skipignore' and 'MFAS approach'.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
+        tempsyn (bool): If True, the tempsyn-relation-elements will added to the graph.
+    Returns:
+        
+    """
+    
+    approach = paramlist[0]
+    skipignore = paramlist[1]
+    
+    
+    #####
+    # preparation of XML file by parsing and collecting specific elements
+    #####
+    filespath = Path('resources')
+    temppre_items = parserutils.xmlparser(filespath)
+    date_items = parserutils.xmlparser(filespath, True, skipignore=skipignore)
+    
+    temppreG = nx.DiGraph()
+    for t in temppre_items:
+        graphutils.add_egdes_from_node_list(temppreG, t)
+    
+    #####
+    # graph for <date> elements & whole graph G
+    #####
+    
+    if tempsyn:
+        tempsyn_items = parserutils.xmlparser(filespath, False, False)
+        tempsynG = nx.DiGraph()
+        for t in tempsyn_items:
+            graphutils.add_egdes_from_node_list(tempsynG, t, False)    
+        tmpG = nx.compose(temppreG, tempsynG)
+    else:
+        tmpG = temppreG
+    if len(paramlist) >= 4:
+        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers, paramlist[3])
+    else:
+        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers)
+    
+    G = nx.compose(tmpG, datesG)
+    
+    return G
+    
+
+
 #TODO: edit docstring and whole function
-def fas_test(paramlist, special_researchers):
+#TODO: insgesamt mal überarbeiten
+def fas_test(paramlist, special_researchers, tempsyn=False):
     """
     Args:
         paramlist (list): List with the parameters 'approach', 'skipignore' and 'MFAS approach'.
-        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.     
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
+        tempsyn (bool): If True, the tempsyn-relation-elements will added to the graph.
     Returns:
         
     """
@@ -25,43 +76,9 @@ def fas_test(paramlist, special_researchers):
     
     #{fas, edges, nodes, cycles, df}
     fas_test_dict = {}    
-    approach = paramlist[0]
-    skipignore = paramlist[1]
     fas_algorithm = paramlist[2]
 
-    #####
-    # preparation of XML file by parsing and collecting specific elements
-    #####
-    
-    filespath = Path('resources')
-    temppre_items = parserutils.xmlparser(filespath)
-    tempsyn_items = parserutils.xmlparser(filespath, False, False)
-    date_items = parserutils.xmlparser(filespath, True, skipignore=skipignore)
-    
-    #####
-    # graph for tempsyn <relation>-elements
-    #####
-    tempsynG = nx.DiGraph()
-    for t in tempsyn_items:
-        graphutils.add_egdes_from_node_list(tempsynG, t)    
-    #####
-    # graph for temppre <relation>-elements
-    #####
-    temppreG = nx.DiGraph()
-    for t in temppre_items:
-        graphutils.add_egdes_from_node_list(temppreG, t)
-    
-    #####
-    # graph for <date> elements & whole graph G
-    #####
-    
-    tmpG = nx.compose(temppreG, tempsynG)
-    if len(paramlist) >= 4:
-        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers, paramlist[3])
-    else:
-        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers)
-    
-    G = nx.compose(tmpG, datesG)
+    G = gengraph(paramlist, special_researchers, tempsyn)
     G_fas = eades_fas.eades_FAS(G, fas_algorithm)
     
     #####
