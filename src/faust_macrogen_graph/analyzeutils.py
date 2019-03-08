@@ -60,11 +60,13 @@ def compare_approaches(approaches, special_researchers, temppre=False):
     
     return approach_df
 
-#TODO: docstring
+
 def gen_frequencyfas(G):
-    """
+    """Computes a DataFrame where all sources of the feedback edges are concatenated with the frequency they appear in the FAS.
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
     Returns:
-        DataFrame
+        DataFrame with the sources of the FAS as index and their frequency within the FAS as column.
     """
     G_fas = eades_fas.eades_FAS(G, True)
     
@@ -190,9 +192,18 @@ def get_norm_research_score(G, special_researchers, min_range=1770, max_range=20
 
 #TODO: docstring
 def minimize_source_removal(G, remaining_fas_size=0):
-    """
+    """Computes a DataFrame where the sources of the FAS are the indicex and the columns. The FAS is reduced
+        step by step by choosing a source and parsing through the source list (without the choosed source)
+        and remove the source until the FAS reaches a given remaining size. Every source that has been removed
+        during the iteration will get an "1" value within the DataFrame, every other source, which wasn't necessary
+        for the reducing of the FAS gets a "0" value.
+    
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        remaining_fas_size (int): Integer which states how big the remaining FAS can be.
     Return:
-        DataFrame
+        DataFrame with "1" values for source, which are important for the FAS, and "0"-values for sources, which can possible be
+        re-added without inducing new cycles.
     """
     
     fasfrequency_df = gen_frequencyfas(G)
