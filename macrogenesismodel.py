@@ -58,6 +58,7 @@ def gengraph(paramlist, special_researchers, tempsyn=False):
 
 #TODO: edit docstring and whole function
 #TODO: insgesamt mal überarbeiten
+#TODO: rename
 def fas_test(paramlist, special_researchers, tempsyn=False):
     """
     Args:

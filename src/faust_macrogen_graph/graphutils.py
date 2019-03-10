@@ -114,8 +114,8 @@ def graph_from_dates(date_items, approach, special_researchers, factor=4):
 #####
 # functions for whole graph
 #####
-    
-def remove_edge_by_source(G, source):
+
+def remove_edges_by_source(G, source):
     """Removes edges of Directed Graph on the basis of the input source.
     
     Args:

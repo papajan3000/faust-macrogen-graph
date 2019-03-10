@@ -191,6 +191,29 @@ def get_norm_research_score(G, special_researchers, min_range=1770, max_range=20
     return norm_research_score
 
 #TODO: docstring
+def gen_critical_sources(G, norm_percent_fas):
+    """
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        norm_percent_fas (dict): Dictionary with sources as keys and normed percentage of their edges within the FAS as values.        
+    Return:
+        Dictionary
+    """
+    
+    critical_sources_fas = {}
+    
+    
+    for critical_source, v in norm_percent_fas.items():
+        nG = G.copy()
+        for edge in list(nG.edges()):
+            edge_data = nG.get_edge_data(edge[0], edge[1])
+            if edge_data["source"] == critical_source:
+                nG.remove_edge(edge[0], edge[1])
+        nG_fas = eades_fas.eades_FAS(nG, True)
+        critical_sources_fas[critical_source] = len(nG_fas)
+    
+    return critical_sources_fas
+
 def minimize_source_removal(G, remaining_fas_size=0):
     """Computes a DataFrame where the sources of the FAS are the indicex and the columns. The FAS is reduced
         step by step by choosing a source and parsing through the source list (without the choosed source)
@@ -212,7 +235,7 @@ def minimize_source_removal(G, remaining_fas_size=0):
     
     for source in sourcelist:
         
-        nG = graphutils.remove_edge_by_source(G.copy(), source)
+        nG = graphutils.remove_edges_by_source(G.copy(), source)
         nG_fas = eades_fas.eades_FAS(nG, True)
         df[source][source] = 1
         
@@ -220,15 +243,68 @@ def minimize_source_removal(G, remaining_fas_size=0):
             withoutsource = [e for i,e in enumerate(sourcelist) if e != source]
             
             for element in withoutsource:
-                nG = graphutils.remove_edge_by_source(nG, element)
-                nlongerG_fas = eades_fas.eades_FAS(nG, True)
+                nG = graphutils.remove_edges_by_source(nG, element)
+                nG_fas = eades_fas.eades_FAS(nG, True) #TODO: changed this from nöognerG_fas; is it right??
                 df[element][source] = 1
                 
-                if len(nlongerG_fas) <= remaining_fas_size:
+                if len(nG_fas) <= remaining_fas_size:
                     break
     
     df.index.name = "source"
     return df
+
+#TODO: docstring
+def minimize_fas_by_source_removal(G):
+    
+    fasfrequency_df = gen_frequencyfas(G)
+    sourcelist = list(fasfrequency_df.index)
+    df = pd.DataFrame(0, index=sourcelist, columns=sourcelist)
+    
+    for source in sourcelist:
+        
+        nG = graphutils.remove_edges_by_source(G.copy(), source)
+        nG_fas = eades_fas.eades_FAS(nG, True)
+        df[source][source] = len(list(nG_fas))
+        
+        withoutsource = [e for i,e in enumerate(sourcelist) if e != source]
+            
+        for element in withoutsource:
+            nnG = graphutils.remove_edges_by_source(nG.copy(), element)
+            nnG_fas = eades_fas.eades_FAS(nnG, True)
+            df[element][source] = len(list(nnG_fas))
+            
+    df.index.name = "source"
+    return df
+
+#TODO: docstring
+def get_normdf(G, special_researchers, dropna=True, min_range=1770, max_range=2017):
+    """
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
+        dropna (bool): If True, the rows with NaN values will be dropped.
+        min_range (int): Lower border of the normalization function.
+        max_range (int): Upper border of the normalization function.
+    Returns:
+        DataFrame with the sources of G as index and the norm_percent_fas-scores and norm_year_frequency-scores as columns.
+    """
+    G_fas_frequency = gen_frequencyfas(G)
+    
+    norm_research_scores = get_norm_research_score(G, special_researchers, min_range, max_range)
+    sorted_norm_research_scores = {k: norm_research_scores[k] for k in sorted(norm_research_scores, key=norm_research_scores.get, reverse=True)}
+    
+    norm_research_df = pd.DataFrame(sorted_norm_research_scores.items(), columns=["source", "norm_year_frequency"])
+    norm_research_df.set_index("source", inplace=True)
+    
+    norm_percent_fas = (G_fas_frequency["fas_frequency"] / norm_research_df["norm_year_frequency"]) * 100
+    norm_percentfas_df = pd.DataFrame(norm_percent_fas)
+    norm_percentfas_df = norm_percentfas_df.rename(columns={0:"norm_percent_fas"})
+    norm_df = norm_research_df.join(norm_percentfas_df, on="source")
+    if dropna:
+        norm_df = norm_df.dropna()
+    norm_df = norm_df.sort_values(by="norm_percent_fas", ascending=False)
+    
+    return norm_df
 
 
 def special_research_generator(item_list):
