@@ -4,6 +4,7 @@ import pandas as pd
 from faust_macrogen_graph import graphutils, eades_fas, parserutils
 from pathlib import Path
 from collections import OrderedDict
+from itertools import permutations
 import networkx as nx
 
 #TODO: docstring
@@ -255,6 +256,8 @@ def minimize_source_removal(G, remaining_fas_size=0):
 
 #TODO: docstring
 def minimize_fas_by_source_removal(G):
+    """
+    """
     
     fasfrequency_df = gen_frequencyfas(G)
     sourcelist = list(fasfrequency_df.index)
@@ -275,6 +278,41 @@ def minimize_fas_by_source_removal(G):
             
     df.index.name = "source"
     return df
+
+#TODO: anderer Titel
+def find_optimal_order(G, remaining_fas_size):
+    """
+    """
+    fasfrequency_df = gen_frequencyfas(G)
+    sourcelist = list(fasfrequency_df.index)
+    
+    optimal_order_dict = {}    
+    
+    permutationlist = list(permutations(sourcelist, len(sourcelist)))
+    
+    c = 0
+    for l in permutationlist:
+        nG = G.copy()
+        nG_fas = list(range(1,100))
+        order = []
+        for source in l:
+            
+            if len(nG_fas) <= remaining_fas_size:
+                ...
+            else:
+                nG = graphutils.remove_edges_by_source(nG, source)
+                nG_fas = eades_fas.eades_FAS(nG, True)
+                order.append(source)
+
+        optimal_order_dict[c] = {"fas_size": len(nG_fas), "opt_order": order, "orig_order": l}
+        c += 1
+        
+    return optimal_order_dict
+                
+                
+
+    
+
 
 #TODO: docstring
 def get_normdf(G, special_researchers, dropna=True, min_range=1770, max_range=2017):
