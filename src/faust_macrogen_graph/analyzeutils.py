@@ -9,25 +9,24 @@ import networkx as nx
 
 #TODO: docstring
 def compare_approaches(approaches, special_researchers, temppre=False):
-    """
+    """Computes a DataFrame where the number of nodes, edges, cycles and feedback edges of each approach of the
+        approaches list will be listed.
     Args:
         approaches (list): List with the approaches names as strings.
         special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values. 
         temppre (bool): If True, the graph for the approaches will be computed by the combination of 
                         the temppre- and the dates-graph, if False, only the dates-graph.
     Return:
-        DataFrame
+        DataFrame with the approaches as index and the features "n nodes", "n edges", "n cycles" and "n feedback edges" as columns.
     """
 
     approaches_graphs = {}
     approaches_fas =  {}
     
-    
     filespath = Path('resources')
     date_items = parserutils.xmlparser(filespath, True, skipignore=False)
     
     for approach in approaches:
-        
         
         if temppre:
             temppre_items = parserutils.xmlparser(filespath)
@@ -43,7 +42,6 @@ def compare_approaches(approaches, special_researchers, temppre=False):
         
         approaches_graphs[approach] = G
         G_fas = eades_fas.eades_FAS(G, True)
-        #adatesG = acyclic dates graph
         aG = G.copy()
         aG.remove_edges_from(G_fas)
     
@@ -64,6 +62,7 @@ def compare_approaches(approaches, special_researchers, temppre=False):
 
 def gen_frequencyfas(G):
     """Computes a DataFrame where all sources of the feedback edges are concatenated with the frequency they appear in the FAS.
+    
     Args:
         G (DiGraph): DiGraph-Object of networkx.
     Returns:
@@ -191,18 +190,17 @@ def get_norm_research_score(G, special_researchers, min_range=1770, max_range=20
         norm_research_score[key] = value * normalized_year
     return norm_research_score
 
-#TODO: docstring
 def gen_critical_sources(G, norm_percent_fas):
-    """
+    """Computes a dictionary with sources of the FAS as keys and the size of the FAS without the sources as values.
+    
     Args:
         G (DiGraph): DiGraph-Object of networkx.
         norm_percent_fas (dict): Dictionary with sources as keys and normed percentage of their edges within the FAS as values.        
     Return:
-        Dictionary
+        Dictionary with sources of the FAS as keys and the size of the FAS without the sources as values.
     """
     
     critical_sources_fas = {}
-    
     
     for critical_source, v in norm_percent_fas.items():
         nG = G.copy()
@@ -257,6 +255,10 @@ def minimize_source_removal(G, remaining_fas_size=0):
 #TODO: docstring
 def minimize_fas_by_source_removal(G):
     """
+    Args:
+       G (DiGraph): DiGraph-Object of networkx.
+    Returns:
+        DataFrame
     """
     
     fasfrequency_df = gen_frequencyfas(G)
@@ -279,12 +281,15 @@ def minimize_fas_by_source_removal(G):
     df.index.name = "source"
     return df
 
-#TODO: anderer Titel
-def find_optimal_order(G, remaining_fas_size):
+#TODO: docstring
+#TODO: anderer Titel?
+#TODO: überarbeitet, anpassen
+def find_optimal_order(G, minimize_rm_source_df, remaining_fas_size):
     """
     """
-    fasfrequency_df = gen_frequencyfas(G)
-    sourcelist = list(fasfrequency_df.index)
+    # max size of the source list is 6 because of performance
+    # choosing the elements with the lowest value of a row cell
+    sourcelist = list(dict(minimize_rm_source_df.min()[:6]).keys())
     
     optimal_order_dict = {}    
     
@@ -308,10 +313,34 @@ def find_optimal_order(G, remaining_fas_size):
         c += 1
         
     return optimal_order_dict
-                
-                
 
-    
+#TODO: docstring
+def minimum_of_optimal_order(optimal_order_dict, min_fas=True):
+    """
+    Args:
+        optimal_order_dict (dict):
+        min_fas (bool): If True, the order with the smallest fas_size with the smalles optimal order will be choosen, 
+                        else the smallest optimal order with the smallest fas_size.
+    """
+    minimum = [100, ["", "", "", "", "", ""]]
+    if min_fas:
+        for k, dictionary in optimal_order_dict.items():
+            if minimum[0] > dictionary["fas_size"]:
+                minimum[0] = dictionary["fas_size"]
+                minimum[1] = dictionary["opt_order"]
+            elif minimum[0] == dictionary["fas_size"] and len(dictionary["opt_order"]) < len(minimum[1]):
+                minimum[0] = dictionary["fas_size"]
+                minimum[1] = dictionary["opt_order"]
+    else:
+        for k, dictionary in optimal_order_dict.items():
+            if len(minimum[1]) > len(dictionary["opt_order"]):
+                minimum[0] = dictionary["fas_size"]
+                minimum[1] = dictionary["opt_order"]
+            elif minimum[0] == dictionary["fas_size"] and len(dictionary["opt_order"]) < len(minimum[1]):
+                minimum[0] = dictionary["fas_size"]
+                minimum[1] = dictionary["opt_order"]
+            
+    return minimum
 
 
 #TODO: docstring

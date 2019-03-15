@@ -159,8 +159,7 @@ def dates_paulus(date_items, special_researchers, notbeforedate=True):
             Dictionary with the manuscripts as keys and 2- or 3-tuples as values with the structure (start_date, source_name) or
             (start_date, source_name, 10.0).
     """
-    
-    
+
     paulus_dict = {}
     
     for item in date_items:

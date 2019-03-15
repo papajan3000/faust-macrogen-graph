@@ -140,15 +140,17 @@ def remove_edges_by_source(G, source):
         
     return nG
 
-#TODO: docstring
 def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=False):
-    """
+    """Add egdes from critical sources of a FAS to an aclycic graph step by step to keep his acyclic nature.    
+    
         Args:
             G (DiGraph): Cyclic DiGraph-Object of networkx.
             aG (DiGraph): Acyclic DiGraph-Object of networkx.
             fas (set): Set of feedback edges.
             critical_sources (list): List with sources as strings.
             readded_edgelist (bool): If True, the function returns a list of the readded edges.
+        Returns:
+            Acyclic graph with possible re-added edges and if desired a list of the readded edges.
     """
     
     aG = aG.copy()
@@ -174,13 +176,7 @@ def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=Fals
         return aG, readded_edges
     else:
         return aG
-
-            
-            
-    
-    
-    
-    
+   
     
     
     
