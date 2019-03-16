@@ -287,7 +287,7 @@ def minimize_fas_by_source_removal(G):
 def find_optimal_order(G, minimize_rm_source_df, remaining_fas_size):
     """
     """
-    # max size of the source list is 6 because of performance
+    # max size of the source list is 6, otherwise the performance would collapse
     # choosing the elements with the lowest value of a row cell
     sourcelist = list(dict(minimize_rm_source_df.min()[:6]).keys())
     
@@ -314,13 +314,16 @@ def find_optimal_order(G, minimize_rm_source_df, remaining_fas_size):
         
     return optimal_order_dict
 
-#TODO: docstring
 def minimum_of_optimal_order(optimal_order_dict, min_fas=True):
-    """
+    """Parses through a dictionary and finds the minimum FAS with a minimum order or a minimum order with a mimimum FAS.
+    
     Args:
-        optimal_order_dict (dict):
+        optimal_order_dict (dict): Dictionary with numbers as keys and dictionaries with the keys "fas_size", "opt_order" 
+                                    and "orig_order" TODO as values,
         min_fas (bool): If True, the order with the smallest fas_size with the smalles optimal order will be choosen, 
-                        else the smallest optimal order with the smallest fas_size.
+                        else the smallest optimal order with the smallest fas_size.               
+    Returns:
+        List with the smallest FAS as first element and the smallest opt_order as second element.           
     """
     minimum = [100, ["", "", "", "", "", ""]]
     if min_fas:
@@ -343,9 +346,9 @@ def minimum_of_optimal_order(optimal_order_dict, min_fas=True):
     return minimum
 
 
-#TODO: docstring
 def get_normdf(G, special_researchers, dropna=True, min_range=1770, max_range=2017):
-    """
+    """Computes a DataFrame with the sources of G as index and the norm_percent_fas-scores and norm_year_frequency-scores as columns.
+    
     Args:
         G (DiGraph): DiGraph-Object of networkx.
         special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
