@@ -215,10 +215,10 @@ def gen_critical_sources(G, norm_percent_fas):
 
 def minimize_source_removal(G, remaining_fas_size=0):
     """Computes a DataFrame where the sources of the FAS are the indicex and the columns. The FAS is reduced
-        step by step by choosing a source and parsing through the source list (without the choosed source)
+        step by step by choosing a source and parsing through the source list (without the selected source)
         and remove the source until the FAS reaches a given remaining size. Every source that has been removed
         during the iteration will get an "1" value within the DataFrame, every other source, which wasn't necessary
-        for the reducing of the FAS gets a "0" value.
+        for the reducing of the FAS gets a "0" value. 
     
     Args:
         G (DiGraph): DiGraph-Object of networkx.
@@ -344,6 +344,47 @@ def minimum_of_optimal_order(optimal_order_dict, min_fas=True):
                 minimum[1] = dictionary["opt_order"]
             
     return minimum
+
+#TODO: wie sinnvoll ist diese Funktion?
+def remove_uncritical_sources(G, G_fas, G_fas_frequency, fas_df):
+    """Computes a list of sources who could possible removed from the Graph to make it acyclic and the reduced size of the FAS 
+        without the uncritical sources. This function is based on the assumption that a FAS could be reduced by removing
+        edges of the cyclic graph by sources in a specific order.
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        G_fas (set): Set of feedback edges of G.
+        G_fas_frequency: DataFrame with the sources of the FAS as index and their frequency within the FAS as column.
+        fas_df: DataFrame with the sources of the FAS as index and columns and tha value 0 or 1 if the source is 
+                necessary for the minimize source removal.
+    Returns:
+        List of sources who could possible removed from the Graph to make it acyclic and the reduced size of the FAS 
+        without the uncritical sources.
+    """
+    Gfasdict = dict(fas_df.sum(axis=1))
+    G_minfas = min(Gfasdict, key=Gfasdict.get) #row with the lowest total value
+    minlGfasdict = dict(fas_df.loc[G_minfas]) #dict of the row
+    
+    tmp_G = G.copy()
+    
+    reduced_fas = 0
+    uncritical_sources = []
+    for k,v in minlGfasdict.items():
+        if v == 1:
+            tmp_G = graphutils.remove_edges_by_source(tmp_G, k)
+        else:
+            reduced_fas += G_fas_frequency.loc[k]["fas_frequency"]
+            uncritical_sources.append(k)
+                  
+    tmp_G_fas = eades_fas.eades_FAS(tmp_G, True)
+    if tmp_G_fas == set():
+        print("The FAS could be theoretical reduced from " + str(len(G_fas)) 
+              + " edges to " + str((len(G_fas) - reduced_fas)) + " edges (decrease of " 
+             + str(int((reduced_fas / len(G_fas)) * 100)) + "%).")
+    else:
+        print("The FAS is still there and contains " + str(len(tmp_G_fas)) + " edges.")
+        
+    return uncritical_sources, reduced_fas
+    
 
 
 def get_normdf(G, special_researchers, dropna=True, min_range=1770, max_range=2017):

@@ -177,11 +177,3 @@ def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=Fals
     else:
         return aG
    
-    
-    
-    
-    
-    
-    
-    
-    
