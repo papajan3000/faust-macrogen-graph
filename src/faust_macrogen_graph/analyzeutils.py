@@ -273,7 +273,7 @@ def find_optimal_order(G, minimize_rm_source_df, remaining_fas_size):
     """Computes a Dictionary with order-IDs as keys and dictionaries as values which in turn have the keys "fas_size", "opt_order" and
         "orig_order". The function takes the sources of the FAS of G and tries to find an optimal order of edges which size is minimal for 
         a given minimimum remaining FAS. For this, all permutations of the six most important FAS sources are tried out 
-        (6 (= 720 combinations) is the maximum parameter to be calculated for the permutations in order to maintain a good performance).
+        ("6" (= 720 combinations) is the maximum parameter to be calculated for the permutations in order to maintain a good performance).
     Args:
         G (DiGraph): DiGraph-Object of networkx.
         minimize_rm_source_df (DataFrame): DataFrame with the sources of the FAS as indices and columns and the FAS size without the 
@@ -339,7 +339,7 @@ def minimum_of_optimal_order(optimal_order_dict, min_fas=True):
     return minimum
 
 def remove_uncritical_sources(G, G_fas, G_fas_frequency, fas_df):
-    """Computes a list of sources who could possible removed from the Graph to make it acyclic and the reduced size of the FAS 
+    """Computes a list of sources who could possible be removed from the Graph to make it acyclic and the reduced size of the FAS 
         without the uncritical sources. This function is based on the assumption that a FAS could be reduced by removing
         edges of the cyclic graph by sources in a specific order.
     Args:

@@ -62,7 +62,7 @@ def deltadegrees(G, deltamaximum=True):
 
 
 def gen_vertex2D(n_nodes, graph_nodes, degrees, delta_degrees):
-    """Generate a two-dimensional array (= list), called vertex2Dlist, where the sources are inside the first nested list and the 
+    """Generates a two-dimensional array (= list), called vertex2Dlist, where the sources are inside the first nested list and the 
         sinkes are in the last nested list while the other nodes are sorted based on their DeltaDegree in one of the other lists.
         A node with a low DeltaDegree will be sorted nearby the beginning of the array and a node with a high DeltaDegree will be
         sorted nearby the end of the array (see the "bucket"-graphic in: Tintelnot (2018), Appendix E, p. 29).
@@ -108,8 +108,8 @@ def gen_vertex2D(n_nodes, graph_nodes, degrees, delta_degrees):
 #############
 
 def eades_GR(vertex2Dlist, G, deltamaximum=True):
-    """Implementation of Eades greedy algorithm "GR" which computes a "good" Vertex Sequence (type = deque) which induces a feedback arc set
-        consisting of all the leftward edges (see: Eades (1993), p. 320)
+    """Implements Eades greedy algorithm "GR" which computes a "good" Vertex Sequence (type = deque) which induces a feedback arc set
+        consisting of all the leftward edges (see: Eades (1993), p. 320).
     
         Args:
             vertex2Dlist (list): two-dimensional array (= lists) with sorted nodes based on their DeltaDegree or their sink or source feature.
@@ -185,7 +185,7 @@ def eades_GR(vertex2Dlist, G, deltamaximum=True):
 ########
 
 def gen_FAS(vertexsequence, G):
-    """Computing a Feedback Arc Set (FAS) out of a "good" Vertex Sequence using a modified Depth-First-Search (DFS). For DFS of Connected Compontens see: 
+    """Computes a Feedback Arc Set (FAS) out of a "good" Vertex Sequence using a modified Depth-First-Search (DFS). For DFS of Connected Compontens see: 
         Mann, Edd, "Depth-First Search and Breadth-First Search in Python", https://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/
         (last accessed on 12th February 2019)).
     
@@ -234,7 +234,8 @@ def gen_FAS(vertexsequence, G):
 
 
 def eades_FAS(G, deltamaximum):
-    """
+    """Computes the Feedback Arc Set (FAS) of a cylcic Graph.
+    
     Args:
         G (DiGraph): A DiGraph-Object of networkx with cycles.
         deltamaximum (bool): If True, the deltamaximum is computed, else the deltaminimum.

@@ -112,7 +112,7 @@ def dates_vitt(date_items):
         Args:
             date_items (list): List of tupels with the following structure: ([source], (manuscript), {notBefore: year, notAfter: year, when: year}).
         Returns:
-            Dictionary with the manuscripts as keys and 2-,3- or 4-tuples as values with the structure (start_date, source_name) or
+            Dictionary with the manuscripts as keys and 2-, 3- or 4-tuples as values with the structure (start_date, source_name) or
             (start_date, source_name, 10.0) or (start_date, source_name, 1.0, end_date).
     """
     vitt_dict = {}
@@ -147,7 +147,7 @@ def dates_vitt(date_items):
 
 
 def dates_paulus(date_items, special_researchers, notbeforedate=True):
-    """Generate a dictionary following one of two approaches of Paulus (author of this project) where the manuscripts and the dates
+    """Generates a dictionary following one of two approaches of Paulus (author of this project) where the manuscripts and the dates
         of the manuscripts are treated as nodes but only one date is connected with manuscript (there is a choice between @notBefore
         or @notAfter dates). If an exact date for a manuscript exists (@when), the manuscript gets a higher weight-value.
         
@@ -223,7 +223,7 @@ def dates_shorter_period(date_items, factor):
         date_items (list): List of tupels with the following structure: ([source], (manuscript), {notBefore: year, notAfter: year, when: year}).
         factor (int): Integer which will be divided with the period between two dates or added/subtracted from a date.
     Returns:
-        Dictionary with the manuscripts as keys and 2-,3- or 4-tuples as values with the structure (start_date, source_name) or
+        Dictionary with the manuscripts as keys and 2-, 3- or 4-tuples as values with the structure (start_date, source_name) or
         (start_date, source_name, 10.0) or (start_date, source_name, 1.0, end_date).
     """
     

@@ -14,7 +14,7 @@ def generate_file_list(path, file_extension=".xml"):
 
 
 def date_items(nodelist, items, skipignore):
-    """Expand the a list of items with a tuple for every <date>-element which is represented by the structure
+    """Expands a list of items with a tuple for every <date>-element which is represented by the structure
         ([source], (@uri of <item>-element), {"notBefore": date, "notAfter": date, "when": date}). Non-existing
         attributes of <date> will be marked with a "-".
     
@@ -27,7 +27,7 @@ def date_items(nodelist, items, skipignore):
        [(['faust://bibliography/bohnenkamp1994'], ('faust://document/faustedition/T_1_H.0',), {'notBefore': '1810-11-04', 'notAfter': '1812-12-01', 'when': '-'}), 
        (['faust://bibliography/bohnenkamp1994'], ('faust://document/faustedition/T_1_H.1',), {'notBefore': '1812-10-20', 'notAfter': '1812-12-01', 'when': '-'})]
     Returns:
-        Edited list of items with newly appended tuples.
+        Edited list of items with the newly appended tuples.
     """
     tmp_items = items
     
@@ -86,7 +86,7 @@ def date_items(nodelist, items, skipignore):
 
 
 def relation_items(nodelist, items, temppre):
-    """Expand the a list of items with a tuple for every <relation>-element which is represented by the structure
+    """Expands a list of items with a tuple for every <relation>-element which is represented by the structure
         ([source], (@uri of first <item>-element, @uri of second <item>-element)).
     
     Args:
@@ -98,7 +98,7 @@ def relation_items(nodelist, items, temppre):
         [(['faust://bibliography/bohnenkamp1994'], ('faust://document/faustedition/H_P9', 'faust://document/bohnenkamp/H_P9a')), 
         (['faust://bibliography/bohnenkamp1994'], ('faust://document/faustedition/1_H.10', 'faust://document/faustedition/H_P27'))]
     Returns:
-        Edited list of items with newly appended tuples.
+        Edited list of items with the newly appended tuples.
     """
     
     if temppre:

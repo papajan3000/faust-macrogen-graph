@@ -7,7 +7,7 @@ from pathlib import Path
 #####
 
 def add_egdes_from_node_list(G, nodelist, temppre=True):
-    """Add an edge from every node of a list of nodes to the next node in the list with the source as edge attribute.
+    """Adds an edge from every node of a list of nodes to the next node in the list with the source as edge attribute.
     
     Args:
         G (DiGraph): DiGraph-Object of networkx.
@@ -43,7 +43,7 @@ def add_egdes_from_node_list(G, nodelist, temppre=True):
 ####
     
 def add_edges_from_dates_list(G, dates_list):
-    """Generate a directed Graph with manuscript and dates as nodes based on a list of dates and manuscripts.    
+    """Generates a directed Graph with manuscript and dates as nodes based on a list of dates and manuscripts.    
     
     Args:
         G (DiGraph): DiGraph-Object of networkx.
@@ -142,7 +142,7 @@ def remove_edges_by_source(G, source):
     return nG
 
 def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=False):
-    """Add egdes from critical sources of a FAS to an acyclic graph step by step to keep his acyclic nature.    
+    """Adds egdes from critical sources of a FAS to an acyclic graph step by step to keep his acyclic nature.    
     
         Args:
             G (DiGraph): Cyclic DiGraph-Object of networkx.
@@ -151,7 +151,7 @@ def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=Fals
             critical_sources (list): List with sources as strings.
             readded_edgelist (bool): If True, the function returns a list of the readded edges.
         Returns:
-            Acyclic graph with possible re-added edges and if desired a list of the readded edges.
+            Acyclic graph with possible re-added edges and if desired, a list of the readded edges.
     """
     
     aG = aG.copy()
@@ -179,7 +179,7 @@ def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=Fals
         return aG
    
 def gen_faustgraph(paramlist, special_researchers, tempsyn=False):
-    """Genereates a Directed Graph with the date- and relation-elements of the Faust macrogenesis XML files.       
+    """Generates a Directed Graph with the date- and relation-elements of the Faust macrogenesis XML files.       
     
     Args:
         paramlist (list): List with the parameters 'approach', 'skipignore' and 'MFAS approach'.
