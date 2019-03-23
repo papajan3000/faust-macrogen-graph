@@ -1,6 +1,8 @@
 old
 graphs
 .installed.cfg
+.ipynb_checkpoints
+build
 bin
 develop-eggs
 dist

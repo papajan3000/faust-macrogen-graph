@@ -1,64 +1,13 @@
 from collections import Counter
 import re
 import pandas as pd
-from faust_macrogen_graph import graphutils, eades_fas, parserutils
-from pathlib import Path
+from faust_macrogen_graph import graphutils, eades_fas
 from collections import OrderedDict
 from itertools import permutations
-import networkx as nx
 
-#TODO: docstring
-def compare_approaches(approaches, special_researchers, temppre=False):
-    """Computes a DataFrame where the number of nodes, edges, cycles and feedback edges of each approach of the
-        approaches list will be listed.
-    Args:
-        approaches (list): List with the approaches names as strings.
-        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values. 
-        temppre (bool): If True, the graph for the approaches will be computed by the combination of 
-                        the temppre- and the dates-graph, if False, only the dates-graph.
-    Return:
-        DataFrame with the approaches as index and the features "n nodes", "n edges", "n cycles" and "n feedback edges" as columns.
-    """
-
-    approaches_graphs = {}
-    approaches_fas =  {}
-    
-    filespath = Path('resources')
-    date_items = parserutils.xmlparser(filespath, True, skipignore=False)
-    
-    for approach in approaches:
-        
-        if temppre:
-            temppre_items = parserutils.xmlparser(filespath)
-            temppreG = nx.DiGraph()
-            for t in temppre_items:
-                graphutils.add_egdes_from_node_list(temppreG, t)
-                
-            datesG = graphutils.graph_from_dates(date_items, approach, special_researchers)
-            G = nx.compose(temppreG, datesG)
-            
-        else:
-            G = graphutils.graph_from_dates(date_items, approach, special_researchers)
-        
-        approaches_graphs[approach] = G
-        G_fas = eades_fas.eades_FAS(G, True)
-        aG = G.copy()
-        aG.remove_edges_from(G_fas)
-    
-        approaches_fas[approach] = G_fas
-    
-    graphs_approaches = {}
-    columns = ["n nodes", "n edges", "n cycles", "n feedback edges"]
-    
-    for k, v in approaches_graphs.items():
-        graphs_approaches[k] = [len(v.nodes()), len(v.edges()), len(list(nx.simple_cycles(v))), len(approaches_fas[k])]
-    
-    approach_df = pd.DataFrame(graphs_approaches)
-    approach_df = approach_df.T
-    approach_df.columns = columns
-    
-    return approach_df
-
+#####
+# functions for representing and analyzing source features
+#####
 
 def gen_frequencyfas(G):
     """Computes a DataFrame where all sources of the feedback edges are concatenated with the frequency they appear in the FAS.
@@ -91,14 +40,14 @@ def gen_frequencyfas(G):
 
 
 def dataframe_from_column(df, metacol, extractcol):
-    """Extract DataFrames of specific columns of another DataFrame and generate a new DataFrame.
+    """Extracts DataFrames of specific columns of another DataFrame and generates a new DataFrame.
     
     Args:
         df (DataFrame): The DataFrame whereof the DataFrames will be extracted.
         metacol (string): Column name of df, where the DataFrames are stored.
         extractcol (string): Column name of the extracted DataFrame.
     Returns:
-        Extracted DataFramefrom another DataFrame.
+        Extracted DataFrame from another DataFrame.
     """
     d = {}
     for idx, dataframe in enumerate(df[metacol]):
@@ -142,7 +91,7 @@ def get_source_year(G, special_researchers):
 
 
 def get_research_score(G):
-    """Parse through the source-attribute of Graph edges and return a Counter with a frequency score assigned to each researcher.
+    """Parses through the source-attribute of the Graph edges and returns a Counter with a frequency score assigned to each researcher.
     
     Args:
         G (DiGraph): DiGraph-Object of networkx.
@@ -158,11 +107,12 @@ def get_research_score(G):
 
 
 def get_norm_research_score(G, special_researchers, min_range=1770, max_range=2017):
-    """Normalize the score of a given Counter of researchers and their score. The score is computed as following: 
+    """Normalizes the score of a frequency of a researchers work. The score is computed as following: 
             Number of the researchers work mentioned in the macrogenesis * normalized year of publication of researchers work about Faust
             e.g.: Bohnenkamp 1994 --> 94 * ((1994 - 1770) / (2017 - 1770)) = 94 * 0.9068825910931174 = 85.24696356275304
-        The goal of the normalization is to generate a number between 0 and 1 as coefficent to give older researchers work less weight in the context
-        of a comparison between two possible conflicting statements of researchers about a different dating of manuscripts.
+        The goal of the normalization is to generate a number between 0 and 1 as coefficent (or weight) and multiplying this with the publication year
+        of the work to give older researchers work less weight in the context of a comparison between two possible conflicting statements of researchers 
+        about a different dating of manuscripts.
         
     Args:
         G (DiGraph): DiGraph-Object of networkx.
@@ -213,8 +163,44 @@ def gen_critical_sources(G, norm_percent_fas):
     
     return critical_sources_fas
 
+
+def get_normdf(G, special_researchers, dropna=True, min_range=1770, max_range=2017):
+    """Computes a DataFrame with the sources of G as index and the norm_percent_fas-scores and norm_year_frequency-scores as columns.
+    
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
+        dropna (bool): If True, the rows with NaN values will be dropped.
+        min_range (int): Lower border of the normalization function.
+        max_range (int): Upper border of the normalization function.
+    Returns:
+        DataFrame with the sources of G as index and the norm_percent_fas-scores and norm_year_frequency-scores as columns.
+    """
+    G_fas_frequency = gen_frequencyfas(G)
+    
+    norm_research_scores = get_norm_research_score(G, special_researchers, min_range, max_range)
+    sorted_norm_research_scores = {k: norm_research_scores[k] for k in sorted(norm_research_scores, key=norm_research_scores.get, reverse=True)}
+    
+    norm_research_df = pd.DataFrame(sorted_norm_research_scores.items(), columns=["source", "norm_year_frequency"])
+    norm_research_df.set_index("source", inplace=True)
+    
+    norm_percent_fas = (G_fas_frequency["fas_frequency"] / norm_research_df["norm_year_frequency"]) * 100
+    norm_percentfas_df = pd.DataFrame(norm_percent_fas)
+    norm_percentfas_df = norm_percentfas_df.rename(columns={0:"norm_percent_fas"})
+    norm_df = norm_research_df.join(norm_percentfas_df, on="source")
+    if dropna:
+        norm_df = norm_df.dropna()
+    norm_df = norm_df.sort_values(by="norm_percent_fas", ascending=False)
+    
+    return norm_df
+
+
+#####
+# functions for FAS minimizing
+#####
+
 def minimize_source_removal(G, remaining_fas_size=0):
-    """Computes a DataFrame where the sources of the FAS are the indicex and the columns. The FAS is reduced
+    """Computes a DataFrame where the sources of the FAS are the indices and the columns. The FAS is reduced
         step by step by choosing a source and parsing through the source list (without the selected source)
         and remove the source until the FAS reaches a given remaining size. Every source that has been removed
         during the iteration will get an "1" value within the DataFrame, every other source, which wasn't necessary
@@ -243,7 +229,7 @@ def minimize_source_removal(G, remaining_fas_size=0):
             
             for element in withoutsource:
                 nG = graphutils.remove_edges_by_source(nG, element)
-                nG_fas = eades_fas.eades_FAS(nG, True) #TODO: changed this from nöognerG_fas; is it right??
+                nG_fas = eades_fas.eades_FAS(nG, True)
                 df[element][source] = 1
                 
                 if len(nG_fas) <= remaining_fas_size:
@@ -252,13 +238,14 @@ def minimize_source_removal(G, remaining_fas_size=0):
     df.index.name = "source"
     return df
 
-#TODO: docstring
 def minimize_fas_by_source_removal(G):
-    """
+    """Computes a DataFrame where the sources of the FAS are the indices and the columns. Each cell of the DataFrame shows,
+        how many edges are in the FAS after the removal of the index- and column-sources.
+    
     Args:
        G (DiGraph): DiGraph-Object of networkx.
     Returns:
-        DataFrame
+        DataFrame with the reduced fas size of the respective index- and column-sources.
     """
     
     fasfrequency_df = gen_frequencyfas(G)
@@ -281,36 +268,42 @@ def minimize_fas_by_source_removal(G):
     df.index.name = "source"
     return df
 
-#TODO: docstring
-#TODO: anderer Titel?
-#TODO: überarbeitet, anpassen
+
 def find_optimal_order(G, minimize_rm_source_df, remaining_fas_size):
+    """Computes a Dictionary with order-IDs as keys and dictionaries as values which in turn have the keys "fas_size", "opt_order" and
+        "orig_order". The function takes the sources of the FAS of G and tries to find an optimal order of edges which size is minimal for 
+        a given minimimum remaining FAS. For this, all permutations of the six most important FAS sources are tried out 
+        (6 (= 720 combinations) is the maximum parameter to be calculated for the permutations in order to maintain a good performance).
+    Args:
+        G (DiGraph): DiGraph-Object of networkx.
+        minimize_rm_source_df (DataFrame): DataFrame with the sources of the FAS as indices and columns and the FAS size without the 
+                                            sources as cell value.
+        remaining_fas_size (int): Desired maximimu size of the FAS after the removal of sources.                                
+    Returns:
+        Dictionary with order-IDs as keys and dictionaries as values which in turn have the keys "fas_size", "opt_order" and
+        "orig_order"
     """
-    """
-    # max size of the source list is 6, otherwise the performance would collapse
     # choosing the elements with the lowest value of a row cell
     sourcelist = list(dict(minimize_rm_source_df.min()[:6]).keys())
     
-    optimal_order_dict = {}    
-    
+    optimal_order_dict = {}
     permutationlist = list(permutations(sourcelist, len(sourcelist)))
+    order_ID = 0
     
-    c = 0
     for l in permutationlist:
         nG = G.copy()
-        nG_fas = list(range(1,100))
+        nG_fas = list(range(1,100)) #random big nG_fas which will be overwritten
         order = []
         for source in l:
-            
             if len(nG_fas) <= remaining_fas_size:
-                ...
+                break
             else:
                 nG = graphutils.remove_edges_by_source(nG, source)
                 nG_fas = eades_fas.eades_FAS(nG, True)
                 order.append(source)
 
-        optimal_order_dict[c] = {"fas_size": len(nG_fas), "opt_order": order, "orig_order": l}
-        c += 1
+        optimal_order_dict[order_ID] = {"fas_size": len(nG_fas), "opt_order": order, "orig_order": l}
+        order_ID += 1
         
     return optimal_order_dict
 
@@ -319,11 +312,11 @@ def minimum_of_optimal_order(optimal_order_dict, min_fas=True):
     
     Args:
         optimal_order_dict (dict): Dictionary with numbers as keys and dictionaries with the keys "fas_size", "opt_order" 
-                                    and "orig_order" TODO as values,
-        min_fas (bool): If True, the order with the smallest fas_size with the smalles optimal order will be choosen, 
+                                    and "orig_order" as values,
+        min_fas (bool): If True, the order with the smallest fas_size with the smallest optimal order will be choosen, 
                         else the smallest optimal order with the smallest fas_size.               
     Returns:
-        List with the smallest FAS as first element and the smallest opt_order as second element.           
+        List with the smallest FAS as first element and the smallest optimal order as second element.           
     """
     minimum = [100, ["", "", "", "", "", ""]]
     if min_fas:
@@ -345,7 +338,6 @@ def minimum_of_optimal_order(optimal_order_dict, min_fas=True):
             
     return minimum
 
-#TODO: wie sinnvoll ist diese Funktion?
 def remove_uncritical_sources(G, G_fas, G_fas_frequency, fas_df):
     """Computes a list of sources who could possible removed from the Graph to make it acyclic and the reduced size of the FAS 
         without the uncritical sources. This function is based on the assumption that a FAS could be reduced by removing
@@ -384,39 +376,10 @@ def remove_uncritical_sources(G, G_fas, G_fas_frequency, fas_df):
         print("The FAS is still there and contains " + str(len(tmp_G_fas)) + " edges.")
         
     return uncritical_sources, reduced_fas
-    
 
-
-def get_normdf(G, special_researchers, dropna=True, min_range=1770, max_range=2017):
-    """Computes a DataFrame with the sources of G as index and the norm_percent_fas-scores and norm_year_frequency-scores as columns.
-    
-    Args:
-        G (DiGraph): DiGraph-Object of networkx.
-        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
-        dropna (bool): If True, the rows with NaN values will be dropped.
-        min_range (int): Lower border of the normalization function.
-        max_range (int): Upper border of the normalization function.
-    Returns:
-        DataFrame with the sources of G as index and the norm_percent_fas-scores and norm_year_frequency-scores as columns.
-    """
-    G_fas_frequency = gen_frequencyfas(G)
-    
-    norm_research_scores = get_norm_research_score(G, special_researchers, min_range, max_range)
-    sorted_norm_research_scores = {k: norm_research_scores[k] for k in sorted(norm_research_scores, key=norm_research_scores.get, reverse=True)}
-    
-    norm_research_df = pd.DataFrame(sorted_norm_research_scores.items(), columns=["source", "norm_year_frequency"])
-    norm_research_df.set_index("source", inplace=True)
-    
-    norm_percent_fas = (G_fas_frequency["fas_frequency"] / norm_research_df["norm_year_frequency"]) * 100
-    norm_percentfas_df = pd.DataFrame(norm_percent_fas)
-    norm_percentfas_df = norm_percentfas_df.rename(columns={0:"norm_percent_fas"})
-    norm_df = norm_research_df.join(norm_percentfas_df, on="source")
-    if dropna:
-        norm_df = norm_df.dropna()
-    norm_df = norm_df.sort_values(by="norm_percent_fas", ascending=False)
-    
-    return norm_df
-
+#####
+# special functions 
+#####
 
 def special_research_generator(item_list):
     """Generates a list with researchers out of all researchers whose name doesn't include a publication year.

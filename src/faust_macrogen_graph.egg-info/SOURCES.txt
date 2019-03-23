@@ -4,6 +4,7 @@ setup.py
 src/faust_macrogen_graph/__init__.py
 src/faust_macrogen_graph/analyzeutils.py
 src/faust_macrogen_graph/approachesutils.py
+src/faust_macrogen_graph/comparisonutils.py
 src/faust_macrogen_graph/eades_fas.py
 src/faust_macrogen_graph/graphutils.py
 src/faust_macrogen_graph/parserutils.py

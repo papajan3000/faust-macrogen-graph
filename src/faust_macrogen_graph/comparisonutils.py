@@ -5,97 +5,42 @@ import pandas as pd
 from collections import Counter, OrderedDict
 import networkx as nx
 
-#TODO: docstring
-#TODO: überarbeiten
-def gengraph(paramlist, special_researchers, tempsyn=False):
-    """
+
+    
+def gen_feature_dict(paramlist, special_researchers, tempsyn=False):
+    """Computes a dictionary with graph and source features as key-value-pairs.
     
     Args:
         paramlist (list): List with the parameters 'approach', 'skipignore' and 'MFAS approach'.
         special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
         tempsyn (bool): If True, the tempsyn-relation-elements will added to the graph.
     Returns:
-        
+        Dictionary with graph and source features as key-value-pairs.
     """
     
-    approach = paramlist[0]
-    skipignore = paramlist[1]
-    
-    
     #####
-    # preparation of XML file by parsing and collecting specific elements
-    #####
-    filespath = Path('resources')
-    temppre_items = parserutils.xmlparser(filespath)
-    date_items = parserutils.xmlparser(filespath, True, skipignore=skipignore)
-    
-    temppreG = nx.DiGraph()
-    for t in temppre_items:
-        graphutils.add_egdes_from_node_list(temppreG, t)
-    
-    #####
-    # graph for <date> elements & whole graph G
-    #####
-    
-    if tempsyn:
-        tempsyn_items = parserutils.xmlparser(filespath, False, False)
-        tempsynG = nx.DiGraph()
-        for t in tempsyn_items:
-            graphutils.add_egdes_from_node_list(tempsynG, t, False)    
-        tmpG = nx.compose(temppreG, tempsynG)
-    else:
-        tmpG = temppreG
-    if len(paramlist) >= 4:
-        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers, paramlist[3])
-    else:
-        datesG = graphutils.graph_from_dates(date_items, approach, special_researchers)
-    
-    G = nx.compose(tmpG, datesG)
-    
-    return G
-    
-
-
-#TODO: edit docstring and whole function
-#TODO: insgesamt mal überarbeiten
-#TODO: rename
-def fas_test(paramlist, special_researchers, tempsyn=False):
-    """
-    Args:
-        paramlist (list): List with the parameters 'approach', 'skipignore' and 'MFAS approach'.
-        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
-        tempsyn (bool): If True, the tempsyn-relation-elements will added to the graph.
-    Returns:
-        
-    """
-    
-    ###########################################################################
-    ###########################################################################
     # preparation & creation of graph
-    ###########################################################################
-    ###########################################################################
+    #####
     
     #{fas, edges, nodes, cycles, df}
-    fas_test_dict = {}    
+    feature_dict = {}    
     fas_algorithm = paramlist[2]
 
-    G = gengraph(paramlist, special_researchers, tempsyn)
+    G = graphutils.gen_faustgraph(paramlist, special_researchers, tempsyn)
     G_fas = eades_fas.eades_FAS(G, fas_algorithm)
     
     #####
-    # adding to the fas_test_dict
+    # adding graph features to the feature_dict
     #####
-    fas_test_dict["fas"] = len(G_fas)
-    fas_test_dict["edges"] = len(G.edges())
-    fas_test_dict["nodes"] = len(G.nodes())
-    fas_test_dict["nodeslist"] = list(G.nodes())
-    fas_test_dict["cycles"] = len(list(nx.simple_cycles(G)))
+    feature_dict["fas"] = len(G_fas)
+    feature_dict["edges"] = len(G.edges())
+    feature_dict["nodes"] = len(G.nodes())
+    feature_dict["nodeslist"] = list(G.nodes())
+    feature_dict["cycles"] = len(list(nx.simple_cycles(G)))
     
-    ###########################################################################
-    ###########################################################################
-    # analyzation
-    ###########################################################################
-    ###########################################################################
+    #####
+    # analysis
+    #####
     year_scores = analyzeutils.get_source_year(G, special_researchers)
     year_df = pd.DataFrame(year_scores.items(), columns=["source", "year"])
     year_df.set_index("source", inplace=True)
@@ -125,8 +70,6 @@ def fas_test(paramlist, special_researchers, tempsyn=False):
     
     source_df = source_df.join(year_df)
     
-    
-    
     fas_source_counter = Counter()
     for edge in G_fas:
         if G.has_edge(edge[0], edge[1]):
@@ -154,9 +97,60 @@ def fas_test(paramlist, special_researchers, tempsyn=False):
     df = df.join(percentfas_df, on="source")
     
     
-    fas_test_dict["source_df"] = source_df
-    fas_test_dict["fasfrequency_df"] = fasfrequency_df
-    fas_test_dict["percentfas_df"] = percentfas_df
+    feature_dict["source_df"] = source_df
+    feature_dict["fasfrequency_df"] = fasfrequency_df
+    feature_dict["percentfas_df"] = percentfas_df
     
     
-    return fas_test_dict
+    return feature_dict
+
+def compare_approaches(approaches, special_researchers, temppre=False):
+    """Computes a DataFrame where the number of nodes, edges, cycles and feedback edges of each approach from the
+        approaches list will be listed.
+    Args:
+        approaches (list): List with the approaches names as strings.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values. 
+        temppre (bool): If True, the graph for the approaches will be computed by the combination of 
+                        the temppre- and the dates-graph, if False, only the dates-graph.
+    Return:
+        DataFrame with the approaches as index and the features "n nodes", "n edges", "n cycles" and "n feedback edges" as columns.
+    """
+
+    approaches_graphs = {}
+    approaches_fas =  {}
+    
+    filespath = Path('resources')
+    date_items = parserutils.xmlparser(filespath, True, skipignore=False)
+    
+    for approach in approaches:
+        
+        if temppre:
+            temppre_items = parserutils.xmlparser(filespath)
+            temppreG = nx.DiGraph()
+            for t in temppre_items:
+                graphutils.add_egdes_from_node_list(temppreG, t)
+                
+            datesG = graphutils.graph_from_dates(date_items, approach, special_researchers)
+            G = nx.compose(temppreG, datesG)
+            
+        else:
+            G = graphutils.graph_from_dates(date_items, approach, special_researchers)
+        
+        approaches_graphs[approach] = G
+        G_fas = eades_fas.eades_FAS(G, True)
+        aG = G.copy()
+        aG.remove_edges_from(G_fas)
+    
+        approaches_fas[approach] = G_fas
+    
+    graphs_approaches = {}
+    columns = ["n nodes", "n edges", "n cycles", "n feedback edges"]
+    
+    for k, v in approaches_graphs.items():
+        graphs_approaches[k] = [len(v.nodes()), len(v.edges()), len(list(nx.simple_cycles(v))), len(approaches_fas[k])]
+    
+    approach_df = pd.DataFrame(graphs_approaches)
+    approach_df = approach_df.T
+    approach_df.columns = columns
+    
+    return approach_df

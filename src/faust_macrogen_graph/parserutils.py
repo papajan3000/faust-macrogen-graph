@@ -76,7 +76,7 @@ def date_items(nodelist, items, skipignore):
         else:
             tmp_dates["when"] = "-"
             
-            
+    
         tmp_nodelist.append(tmp_sources)    
         tmp_nodelist.append(tuple(tmp_nodes))     
         tmp_nodelist.append(tmp_dates)              

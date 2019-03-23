@@ -12,7 +12,7 @@ def year_comparison(manuscript, existing_manuscript_source, source_name, special
         source_name (string): Possible different researchers for the same manuscript.
         special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.     
     Returns:
-        False if the year inside the existing_manuscript_source string is greater than the year in the source_name string.
+        Boolean which is False if the year inside the existing_manuscript_source string is greater than the year in the source_name string.
     """
     greater = False
 

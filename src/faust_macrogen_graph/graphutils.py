@@ -1,5 +1,6 @@
 import networkx as nx
-from faust_macrogen_graph import approachesutils
+from faust_macrogen_graph import approachesutils, parserutils
+from pathlib import Path
 
 #####
 # functions for the relation elements
@@ -141,7 +142,7 @@ def remove_edges_by_source(G, source):
     return nG
 
 def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=False):
-    """Add egdes from critical sources of a FAS to an aclycic graph step by step to keep his acyclic nature.    
+    """Add egdes from critical sources of a FAS to an acyclic graph step by step to keep his acyclic nature.    
     
         Args:
             G (DiGraph): Cyclic DiGraph-Object of networkx.
@@ -177,3 +178,52 @@ def readding_edges_by_source(G, aG, fas, critical_sources, readded_edgelist=Fals
     else:
         return aG
    
+def gen_faustgraph(paramlist, special_researchers, tempsyn=False):
+    """Genereates a Directed Graph with the date- and relation-elements of the Faust macrogenesis XML files.       
+    
+    Args:
+        paramlist (list): List with the parameters 'approach', 'skipignore' and 'MFAS approach'.
+        special_resarchers (dict): Dictionary with sources (string) as keys and their publication year (int) as values.
+        tempsyn (bool): If True, the tempsyn-relation-elements will added to the graph.
+    Returns:
+        Directed Graph with the date- and relation-elements of the Faust macrogenesis XML files.        
+    """
+    
+    approach = paramlist[0]
+    skipignore = paramlist[1]
+    
+    #####
+    # preparation of XML file by parsing and collecting specific elements
+    #####
+    filespath = Path('resources')
+    temppre_items = parserutils.xmlparser(filespath)
+    date_items = parserutils.xmlparser(filespath, True, skipignore=skipignore)
+    
+    #####
+    # graph for relation-elements
+    #####
+    
+    temppreG = nx.DiGraph()
+    for t in temppre_items:
+        add_egdes_from_node_list(temppreG, t)
+    
+    #####
+    # graph for date-elements & whole graph G
+    #####
+    
+    if tempsyn:
+        tempsyn_items = parserutils.xmlparser(filespath, False, False)
+        tempsynG = nx.DiGraph()
+        for t in tempsyn_items:
+            add_egdes_from_node_list(tempsynG, t, False)    
+        tmpG = nx.compose(temppreG, tempsynG)
+    else:
+        tmpG = temppreG
+    if len(paramlist) >= 4:
+        datesG = graph_from_dates(date_items, approach, special_researchers, paramlist[3])
+    else:
+        datesG = graph_from_dates(date_items, approach, special_researchers)
+    
+    G = nx.compose(tmpG, datesG)
+    
+    return G
