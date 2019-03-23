@@ -3,13 +3,13 @@ Creation of a graph which represents an absolute order of the creation date of t
 
 ## 1. The issue of the manuscript macrogenesis
 ### 1.1. The research issue
-The digital <b>Faustedition</b> delivers manuscript of the novels <b>Faust</b> and <b>Faust II</b>. These manuscripts hold the problem that they are undated. It is furthermore possible that more than one inscription exists for a manuscript. The research tried and tries to date the making of the manuscripts but most of the dates cannot be clearly evidenced and some creation dates of the manuscripts contradict each other. It is the goal for the editors and authors of the <b>Faustedition</b> to obtain an absolute order of the manuscripts. 
+The digital <b>Faustedition</b> delivers manuscripts of the novels <b>Faust</b> and <b>Faust II</b>. These manuscripts hold the problem that they are undated. It is furthermore possible that more than one inscription exists for a manuscript. The research tried and tries to date the making of the manuscripts but most of the dates cannot be clearly evidenced and some creation dates of the manuscripts contradict each other. It is the goal for the editors and authors of the <b>Faustedition</b> to obtain an absolute order of the manuscripts. 
 
 ### 1.2. The technical issue
-To achieve this goal, the makers of the program model for the <b>Faustedition</b> created a graph network which should ideally represent the manuscripts in a definite order. The contradictions of the research dates lead to appearance of <b>cycles</b> whereby a definite order is not possible. The removal of cycles within a graph is one of Karps 21 NP-complete problems (see: https://en.wikipedia.org/wiki/Karp%27s_21_NP-complete_problems) which means there is no efficient solution for the problem. The problem, which is called <b>Minimum Feedback Arc Set</b>-problem (MFAS), tries to induce a minimal <b>Feedback Arc Set</b> (FAS) and is a field of research within the computer science. There are some attempts who found a partial solution for the problem. An effiecent yet simple solution is given by Peter <b>Eades</b> (see: Eades, Peter / Lin, Xuemin / Smyth, W. F., "A Fast and Effective Heuristic for the Feedback Arc Set Problem," in: Information Processing Letters (1993), Vol. 47(6), pp. 319-323).
+To achieve this goal, the makers of the model for the <b>Faustedition</b> created a graph network which should ideally represent the manuscripts in a definite order. The contradictions of the research dates lead to appearance of <b>cycles</b> whereby a definite order is not possible. The removal of cycles within a graph is one of Karps 21 NP-complete problems (see: https://en.wikipedia.org/wiki/Karp%27s_21_NP-complete_problems) which means there is no efficient solution for the problem. The problem, which is called <b>Minimum Feedback Arc Set</b>-problem (MFAS), tries to induce a minimal <b>Feedback Arc Set</b> (FAS) and is a field of research within the computer science. There are some attempts who found a partial solution for the problem. An effiecent yet simple solution is given by Peter <b>Eades</b> (see: Eades, Peter / Lin, Xuemin / Smyth, W. F., "A Fast and Effective Heuristic for the Feedback Arc Set Problem," in: Information Processing Letters (1993), Vol. 47(6), pp. 319-323).
 
 ## 2. The challenge of this project
-This project will deliver an implementation of Eades MFAS-algorithmm which will be applied to the graph that represents the dating elements of the macrogenesis and is also created in this project. This project will follow the content of these following three questions:
+This project will deliver an implementation of Eades MFAS-algorithm which will be applied to the graph that represents the dating elements of the macrogenesis and is also created in this project. This project will follow the content of these following three questions:
 
 1. How can we integrate the absolute datings? How does the FAS look like with and without absolute datings?
 2. Can a more detailed analysis of the number of edges and the number of contradictions be helpful to decide which edges of which source should be removed?
@@ -19,62 +19,62 @@ The answers to this question and more detailed information about the approach of
 
 ## 3. The tree structure layout of the project
 
-├── data
-│   ├── longer_period_fas_dataframe.csv
-│   ├── longer_periods_dataframe.csv
-│   ├── minimize_rm_source_df(vitt).csv
-│   ├── optimal_order_dict_lG(p=2).pkl
-│   ├── optimal_order_dict_sG(p=22).pkl
-│   ├── optimal_order_dict_sG(p=2).pkl
-│   ├── optimal_order_dict_vG(p=27).pkl
-│   ├── optimal_order_dict_vG(p=2).pkl
-│   ├── shorter_period_fas_dataframe.csv
-│   ├── shorter_periods_dataframe.csv
-│   └── vitt_fas_dataframe.csv
-├── resources
-│   ├── macrogenesis-normalized
-│   │   ├── empty.xml
-│   │   ├── fischer-lamberg
-│   │   │   ├── III.xml
-│   │   │   └── II.xml
-│   │   ├── handschriftendatierung_iii.xml
-│   │   ├── handschriftendatierung_ii.xml
-│   │   ├── handschriftendatierung_iv.xml
-│   │   ├── handschriftendatierung_i.xml
-│   │   ├── handschriftendatierung_pre1800.xml
-│   │   ├── handschriftendatierung_uncertain.xml
-│   │   ├── handschriftendatierung_v.xml
-│   │   ├── macrogenesis.rnc
-│   │   ├── self
-│   │   │   ├── self_1.xml
-│   │   │   ├── self_2_III.xml
-│   │   │   ├── self_2_II.xml
-│   │   │   ├── self_2_IV.xml
-│   │   │   ├── self_2_I.xml
-│   │   │   ├── self_2_V.xml
-│   │   │   └── self_print.xml
-│   │   └── wa
-│   │       └── 15_2
-│   │           ├── III.xml
-│   │           ├── II.xml
-│   │           ├── IV.xml
-│   │           ├── I.xml
-│   │           └── V.xml
-│   ├── macrogenesis-normalized.zip
-│   └── vitt_macrogen.pdf
-└── src
-    ├── faust_macrogen_graph
-    │   ├── analyzeutils.py
-    │   ├── approachesutils.py
-    │   ├── comparisonutils.py
-    │   ├── eades_fas.py
-    │   ├── graphutils.py
-    │   ├── __init__.py
-    │   ├── parserutils.py
-├── macrogenesismodel_nb.ipynb
-├── README.md
-├── setup.cfg
-├── setup.py
+├── data<br>
+│   ├── longer_period_fas_dataframe.csv<br>
+│   ├── longer_periods_dataframe.csv<br>
+│   ├── minimize_rm_source_df(vitt).csv<br>
+│   ├── optimal_order_dict_lG(p=2).pkl<br>
+│   ├── optimal_order_dict_sG(p=22).pkl<br>
+│   ├── optimal_order_dict_sG(p=2).pkl<br>
+│   ├── optimal_order_dict_vG(p=27).pkl<br>
+│   ├── optimal_order_dict_vG(p=2).pkl<br>
+│   ├── shorter_period_fas_dataframe.csv<br>
+│   ├── shorter_periods_dataframe.csv<br>
+│   └── vitt_fas_dataframe.csv<br>
+├── resources<br>
+│   ├── macrogenesis-normalized<br>
+│   │   ├── empty.xml<br>
+│   │   ├── fischer-lamberg<br>
+│   │   │   ├── III.xml<br>
+│   │   │   └── II.xml<br>
+│   │   ├── handschriftendatierung_iii.xml<br>
+│   │   ├── handschriftendatierung_ii.xml<br>
+│   │   ├── handschriftendatierung_iv.xml<br>
+│   │   ├── handschriftendatierung_i.xml<br>
+│   │   ├── handschriftendatierung_pre1800.xml<br>
+│   │   ├── handschriftendatierung_uncertain.xml<br>
+│   │   ├── handschriftendatierung_v.xml<br>
+│   │   ├── macrogenesis.rnc<br>
+│   │   ├── self<br>
+│   │   │   ├── self_1.xml<br>
+│   │   │   ├── self_2_III.xml<br>
+│   │   │   ├── self_2_II.xml<br>
+│   │   │   ├── self_2_IV.xml<br>
+│   │   │   ├── self_2_I.xml<br>
+│   │   │   ├── self_2_V.xml<br>
+│   │   │   └── self_print.xml<br>
+│   │   └── wa<br>
+│   │       └── 15_2<br>
+│   │           ├── III.xml<br>
+│   │           ├── II.xml<br>
+│   │           ├── IV.xml<br>
+│   │           ├── I.xml<br>
+│   │           └── V.xml<br>
+│   ├── macrogenesis-normalized.zip<br>
+│   └── vitt_macrogen.pdf<br>
+└── src<br>
+    ├── faust_macrogen_graph<br>
+    │   ├── analyzeutils.py<br>
+    │   ├── approachesutils.py<br>
+    │   ├── comparisonutils.py<br>
+    │   ├── eades_fas.py<br>
+    │   ├── graphutils.py<br>
+    │   ├── __init__.py<br>
+    │   ├── parserutils.py<br>
+├── macrogenesismodel_nb.ipynb<br>
+├── README.md<br>
+├── setup.cfg<br>
+├── setup.py<br>
 
 
 ## 4. Short explanation of the most important files and folders
