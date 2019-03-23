@@ -69,7 +69,7 @@ The answers to this question and more detailed information about the approach of
     │   ├── comparisonutils.py<br>
     │   ├── eades_fas.py<br>
     │   ├── graphutils.py<br>
-    │   ├── __init__.py<br>
+    │   ├── __init_.py<br>
     │   ├── parserutils.py<br>
 ├── macrogenesismodel_nb.ipynb<br>
 ├── README.md<br>
@@ -80,7 +80,7 @@ The answers to this question and more detailed information about the approach of
 ## 4. Short explanation of the most important files and folders
 ### 4.1. data
 
-This folder stores saved pkl- and csv-files which are relevant for analyzes within the <b>"macrogenesismodel_nb</b>-notebook but had to be saved because because the calculation of the data inside these files took a long time.
+This folder stores saved pkl- and csv-files which are relevant for analyzes within the <b>"macrogenesismodel_nb"</b>-notebook but had to be saved because the calculation of the data inside these files took a long time.
 
 ### 4.2. resources
 
@@ -118,15 +118,15 @@ This folder stores the macrogensis data within the XML files and a pdf-file refe
 ```
 
 ### 4.3. src
-<b>analyzeutils.py</b>: In this file are the functions stored which are mainly relevant for the analyzing of the macrogenesis sources like normalizing the publication years of the sources, minimizing the removal of the sources and comparing different implementation approaches of the date-elements with each other.<br>
+<b>analyzeutils.py</b>: In this file are the functions stored which are mainly relevant for the analyzing of the macrogenesis sources like normalizing the publication years of the sources, minimizing the removal of the sources and finding optimal source orders for a minimal source removal.<br>
 <b>approachesutils.py</b>: In this file are the functions stored which implements six different implementation approaches of the date-elements of the macrogenesis.<br>
-<b>comparisonutils.py</b>: In this file are the functions stored which compare the approaches of the <i>approachesutils.py</i> and their features with eachother.
+<b>comparisonutils.py</b>: In this file are the functions stored which compare the approaches of the <i>approachesutils.py</i> and their features with eachother.<br>
 <b>eades_fas.py</b>: This file implements the minimum feedback arc set algorithm by Peter <b>Eades</b> and a variation of this algorithm by Felix <b>Tintelnot</b>.<br>
-<b>graphutils.py</b>: In this file are the functions stored which are relevant for the creation of the graphs of the three different XML elements (see 4.2) and the removing and re-adding of edges to graphs.
+<b>graphutils.py</b>: In this file are the functions stored which are relevant for the creation of the graphs of the three different XML elements (see 4.2) and the removing and re-adding of edges to graphs.<br>
 <b>parserutils.py</b>: In this file are the functions stored which parses the XML files of the macrogenesis for the three different XML elements (see 4.2).
 
 
-#### 4.4. macrogenesismodel_nb.ipynb
+### 4.4. macrogenesismodel_nb.ipynb
 
 In this notebook will the whole process of the analysis, consideration and implementation of an acyclic macrogenesis graph be explained and performed. 
 Further information will be provided by the notebook itself.
