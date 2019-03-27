@@ -278,7 +278,7 @@ def find_optimal_order(G, minimize_rm_source_df, remaining_fas_size):
         G (DiGraph): DiGraph-Object of networkx.
         minimize_rm_source_df (DataFrame): DataFrame with the sources of the FAS as indices and columns and the FAS size without the 
                                             sources as cell value.
-        remaining_fas_size (int): Desired maximimu size of the FAS after the removal of sources.                                
+        remaining_fas_size (int): Desired maximimum size of the FAS after the removal of sources.                                
     Returns:
         Dictionary with order-IDs as keys and dictionaries as values which in turn have the keys "fas_size", "opt_order" and
         "orig_order"
