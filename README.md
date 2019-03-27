@@ -6,7 +6,7 @@ Creation of a graph which represents an absolute order of the creation date of t
 The digital <b>Faustedition</b> delivers manuscripts of the novels <b>Faust</b> and <b>Faust II</b>. These manuscripts hold the problem that they are undated. It is furthermore possible that more than one inscription exists for a manuscript. The research tried and tries to date the making of the manuscripts but most of the dates cannot be clearly evidenced and some creation dates of the manuscripts contradict each other. It is the goal for the editors and authors of the <b>Faustedition</b> to obtain an absolute order of the manuscripts. 
 
 ### 1.2. The technical issue
-To achieve this goal, the makers of the model for the <b>Faustedition</b> created a graph network which should ideally represent the manuscripts in a definite order. The contradictions of the research dates lead to appearance of <b>cycles</b> whereby a definite order is not possible. The removal of cycles within a graph is one of Karps 21 NP-complete problems (see: https://en.wikipedia.org/wiki/Karp%27s_21_NP-complete_problems) which means there is no efficient solution for the problem. The problem, which is called <b>Minimum Feedback Arc Set</b>-problem (MFAS), tries to induce a minimal <b>Feedback Arc Set</b> (FAS) and is a field of research within the computer science. There are some attempts who found a partial solution for the problem. An effiecent yet simple solution is given by Peter <b>Eades</b> (see: Eades, Peter / Lin, Xuemin / Smyth, W. F., "A Fast and Effective Heuristic for the Feedback Arc Set Problem," in: Information Processing Letters (1993), Vol. 47(6), pp. 319-323).
+To achieve this goal, the authors of the model for the <b>Faustedition</b> created a graph network which should ideally represent the manuscripts in a definite order. The contradictions of the research dates lead to appearance of <b>cycles</b> whereby a definite order is not possible. The removal of cycles within a graph is one of Karps 21 NP-complete problems (see: https://en.wikipedia.org/wiki/Karp%27s_21_NP-complete_problems) which means there is no efficient solution for the problem. The problem, which is called <b>Minimum Feedback Arc Set</b>-problem (MFAS), tries to induce a minimal <b>Feedback Arc Set</b> (FAS) and is a field of research within the computer science. There are some attempts who found a partial solution for the problem. An effiecent yet simple solution is given by Peter <b>Eades</b> (see: Eades, Peter / Lin, Xuemin / Smyth, W. F., "A Fast and Effective Heuristic for the Feedback Arc Set Problem," in: Information Processing Letters (1993), Vol. 47(6), pp. 319-323).
 
 ## 2. The challenge of this project
 This project will deliver an implementation of Eades MFAS-algorithm which will be applied to the graph that represents the dating elements of the macrogenesis and is also created in this project. This project will follow the content of these following three questions:
@@ -21,15 +21,13 @@ The answers to this question and more detailed information about the approach of
 
 ├── data<br>
 │   ├── longer_period_fas_dataframe.csv<br>
-│   ├── longer_periods_dataframe.csv<br>
-│   ├── minimize_rm_source_df(vitt).csv<br>
-│   ├── optimal_order_dict_lG(p=2).pkl<br>
-│   ├── optimal_order_dict_sG(p=22).pkl<br>
-│   ├── optimal_order_dict_sG(p=2).pkl<br>
-│   ├── optimal_order_dict_vG(p=27).pkl<br>
-│   ├── optimal_order_dict_vG(p=2).pkl<br>
+│   ├── minimize_rm_source_df(longer-period)<br>
+│   ├── minimize_rm_source_df(shorter-period)<br>
+│   ├── minimize_rm_source_df(vitt)<br>
+│   ├── optimal_order_dict_lG(p=0).pkl<br>
+│   ├── optimal_order_dict_sG(p=0).pkl<br>
+│   ├── optimal_order_dict_vG(p=0).pkl<br>
 │   ├── shorter_period_fas_dataframe.csv<br>
-│   ├── shorter_periods_dataframe.csv<br>
 │   └── vitt_fas_dataframe.csv<br>
 ├── resources<br>
 │   ├── macrogenesis-normalized<br>
@@ -80,7 +78,7 @@ The answers to this question and more detailed information about the approach of
 ## 4. Short explanation of the most important files and folders
 ### 4.1. data
 
-This folder stores saved pkl- and csv-files which are relevant for analyzes within the <b>"macrogenesismodel_nb"</b>-notebook but had to be saved because the calculation of the data inside these files took a long time.
+This folder stores saved pkl-, txt- and csv-files which are relevant for analyzes within the <b>"macrogenesismodel_nb"</b>-notebook but had to be saved because the calculation of the data inside these files took a long time.
 
 ### 4.2. resources
 
