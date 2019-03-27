@@ -1,0 +1,14 @@
+source,faust://bibliography/wa_I_15_2,faust://bibliography/fischer-lamberg1955,faust://bibliography/bohnenkamp1994,faust://bibliography/landeck1981,faust://bibliography/hertz1932,faust://bibliography/pniower1899,faust://self,faust://bibliography/morris1900,faust://bibliography/hertz1931,faust://bibliography/grumach1953,faust://bibliography/bluhm1966,faust://bibliography/wa_I_14,faust://bibliography/grumach1958
+faust://bibliography/wa_I_15_2,55,37,39,40,40,52,52,55,52,54,53,54,54
+faust://bibliography/fischer-lamberg1955,37,86,59,64,65,83,77,85,85,85,84,85,86
+faust://bibliography/bohnenkamp1994,39,59,97,78,78,93,91,97,96,97,96,96,96
+faust://bibliography/landeck1981,40,64,78,108,96,104,104,109,108,107,107,107,107
+faust://bibliography/hertz1932,40,65,78,96,109,105,107,108,108,108,109,108,108
+faust://bibliography/pniower1899,52,83,93,104,105,128,120,127,127,127,126,127,127
+faust://self,52,77,91,104,107,120,124,124,123,123,122,123,123
+faust://bibliography/morris1900,55,85,97,109,108,127,124,131,130,130,129,130,130
+faust://bibliography/hertz1931,52,85,96,108,108,127,123,130,131,130,129,130,130
+faust://bibliography/grumach1953,54,85,97,107,108,127,123,130,130,131,129,130,130
+faust://bibliography/bluhm1966,53,84,96,107,109,126,122,129,129,129,130,129,129
+faust://bibliography/wa_I_14,54,85,96,107,108,127,123,130,130,130,129,131,130
+faust://bibliography/grumach1958,54,86,96,107,108,127,123,130,130,130,129,130,131

@@ -1,0 +1,8 @@
+source,faust://bibliography/wa_I_15_2,faust://bibliography/fischer-lamberg1955,faust://bibliography/landeck1981,faust://bibliography/hertz1932,faust://bibliography/bohnenkamp1994,faust://self,faust://bibliography/inventare_2_2
+faust://bibliography/wa_I_15_2,22,11,18,17,21,21,22
+faust://bibliography/fischer-lamberg1955,11,53,42,44,42,50,51
+faust://bibliography/landeck1981,18,42,68,63,59,68,67
+faust://bibliography/hertz1932,17,44,63,70,60,71,69
+faust://bibliography/bohnenkamp1994,21,42,59,60,70,68,69
+faust://self,21,50,68,71,68,80,79
+faust://bibliography/inventare_2_2,22,51,67,69,69,79,78
