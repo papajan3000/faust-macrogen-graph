@@ -19,6 +19,7 @@ The answers to this question and more detailed information about the approach of
 
 ## 3. The tree structure layout of the project
 
+```
 ├── data<br>
 │   ├── longer_period_fas_dataframe.csv<br>
 │   ├── minimize_rm_source_df(longer-period)<br>
@@ -73,7 +74,7 @@ The answers to this question and more detailed information about the approach of
 ├── README.md<br>
 ├── setup.cfg<br>
 ├── setup.py<br>
-
+```
 
 ## 4. Short explanation of the most important files and folders
 ### 4.1. data
