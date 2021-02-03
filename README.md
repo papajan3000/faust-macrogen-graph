@@ -20,60 +20,60 @@ The answers to this question and more detailed information about the approach of
 ## 3. The tree structure layout of the project
 
 ```
-├── data<br>
-│   ├── longer_period_fas_dataframe.csv<br>
-│   ├── minimize_rm_source_df(longer-period)<br>
-│   ├── minimize_rm_source_df(shorter-period)<br>
-│   ├── minimize_rm_source_df(vitt)<br>
-│   ├── optimal_order_dict_lG(p=0).pkl<br>
-│   ├── optimal_order_dict_sG(p=0).pkl<br>
-│   ├── optimal_order_dict_vG(p=0).pkl<br>
-│   ├── shorter_period_fas_dataframe.csv<br>
-│   └── vitt_fas_dataframe.csv<br>
-├── resources<br>
-│   ├── macrogenesis-normalized<br>
-│   │   ├── empty.xml<br>
-│   │   ├── fischer-lamberg<br>
-│   │   │   ├── III.xml<br>
-│   │   │   └── II.xml<br>
-│   │   ├── handschriftendatierung_iii.xml<br>
-│   │   ├── handschriftendatierung_ii.xml<br>
-│   │   ├── handschriftendatierung_iv.xml<br>
-│   │   ├── handschriftendatierung_i.xml<br>
-│   │   ├── handschriftendatierung_pre1800.xml<br>
-│   │   ├── handschriftendatierung_uncertain.xml<br>
-│   │   ├── handschriftendatierung_v.xml<br>
-│   │   ├── macrogenesis.rnc<br>
-│   │   ├── self<br>
-│   │   │   ├── self_1.xml<br>
-│   │   │   ├── self_2_III.xml<br>
-│   │   │   ├── self_2_II.xml<br>
-│   │   │   ├── self_2_IV.xml<br>
-│   │   │   ├── self_2_I.xml<br>
-│   │   │   ├── self_2_V.xml<br>
-│   │   │   └── self_print.xml<br>
-│   │   └── wa<br>
-│   │       └── 15_2<br>
-│   │           ├── III.xml<br>
-│   │           ├── II.xml<br>
-│   │           ├── IV.xml<br>
-│   │           ├── I.xml<br>
-│   │           └── V.xml<br>
-│   ├── macrogenesis-normalized.zip<br>
-│   └── vitt_macrogen.pdf<br>
-└── src<br>
-    ├── faust_macrogen_graph<br>
-    │   ├── analyzeutils.py<br>
-    │   ├── approachesutils.py<br>
-    │   ├── comparisonutils.py<br>
-    │   ├── eades_fas.py<br>
-    │   ├── graphutils.py<br>
-    │   ├── __init_.py<br>
-    │   ├── parserutils.py<br>
-├── macrogenesismodel_nb.ipynb<br>
-├── README.md<br>
-├── setup.cfg<br>
-├── setup.py<br>
+├── data
+│   ├── longer_period_fas_dataframe.csv
+│   ├── minimize_rm_source_df(longer-period)
+│   ├── minimize_rm_source_df(shorter-period)
+│   ├── minimize_rm_source_df(vitt)
+│   ├── optimal_order_dict_lG(p=0).pkl
+│   ├── optimal_order_dict_sG(p=0).pkl
+│   ├── optimal_order_dict_vG(p=0).pkl
+│   ├── shorter_period_fas_dataframe.csv
+│   └── vitt_fas_dataframe.csv
+├── resources
+│   ├── macrogenesis-normalized
+│   │   ├── empty.xml
+│   │   ├── fischer-lamberg
+│   │   │   ├── III.xml
+│   │   │   └── II.xml
+│   │   ├── handschriftendatierung_iii.xml
+│   │   ├── handschriftendatierung_ii.xml
+│   │   ├── handschriftendatierung_iv.xml
+│   │   ├── handschriftendatierung_i.xml
+│   │   ├── handschriftendatierung_pre1800.xml
+│   │   ├── handschriftendatierung_uncertain.xml
+│   │   ├── handschriftendatierung_v.xml
+│   │   ├── macrogenesis.rnc
+│   │   ├── self
+│   │   │   ├── self_1.xml
+│   │   │   ├── self_2_III.xml
+│   │   │   ├── self_2_II.xml
+│   │   │   ├── self_2_IV.xml
+│   │   │   ├── self_2_I.xml
+│   │   │   ├── self_2_V.xml
+│   │   │   └── self_print.xml
+│   │   └── wa
+│   │       └── 15_2
+│   │           ├── III.xml
+│   │           ├── II.xml
+│   │           ├── IV.xml
+│   │           ├── I.xml
+│   │           └── V.xml
+│   ├── macrogenesis-normalized.zip
+│   └── vitt_macrogen.pdf
+└── src
+    ├── faust_macrogen_graph
+    │   ├── analyzeutils.py
+    │   ├── approachesutils.py
+    │   ├── comparisonutils.py
+    │   ├── eades_fas.py
+    │   ├── graphutils.py
+    │   ├── __init_.py
+    │   ├── parserutils.py
+├── macrogenesismodel_nb.ipynb
+├── README.md
+├── setup.cfg
+├── setup.py
 ```
 
 ## 4. Short explanation of the most important files and folders
